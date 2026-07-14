@@ -1,0 +1,6 @@
+.DS_Store
+**/.DS_Store
+# Real org contexts never enter this repo — only the template and the demo adapter.
+contexts/*
+!contexts/_template/
+!contexts/example-corp/
