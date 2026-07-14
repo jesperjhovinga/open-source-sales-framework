@@ -12,10 +12,21 @@ Remaining:
       (Pre-conversion audit counted 23 raw-path lines across 10 skills, not
       the 22/11 originally claimed. Definitional `contexts/<org>/` mentions
       in improve-framework-architecture stay — they describe the seam itself.)
-- [ ] Extract org residue: Dutch defaults in bd-email/event-invite/cold-call-prep
+- [x] Extract org residue: Dutch defaults in bd-email/event-invite/cold-call-prep
       → `context.tone` language field; NL disqualifier lists in
-      prospect-sourcing skill + `process_engagers.py` → `context.icp` config;
+      prospect-sourcing skill + `process_engagers.py` → `context.icp` config
+      (`headline_prefilter` JSON block, script fails loud without it);
       pitch prose in bd-email/cold-call-prep → `context.positioning`.
+      Removed Dutch content lives in git history (pre-extraction: 0aafb9f);
+      a real org context carries it locally, never in git.
+- [ ] Secondary residue (found in the extraction audit, out of that scope):
+      account-research dossier template (inline ICP table, Prop A/B pitch,
+      offer-format names) → `context.icp`/`context.positioning`;
+      bd-user-rules hardcoded subject convention → `context.tone`;
+      prospect-sourcing.spec.md "Netherlands filter" step → fold into the
+      C2 spec↔skill reconciliation; decide whether `process_engagers.py`'s
+      multilingual headline separators (" at ", " bij ", …) are input-parsing
+      heuristics (fine) or belong in `headline_prefilter` config.
 
 ## C2 — One source of truth per workflow
 - [ ] Reconcile prospect-sourcing spec↔skill (dedup key, enrichment call, ICP

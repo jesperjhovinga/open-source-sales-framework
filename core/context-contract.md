@@ -12,12 +12,12 @@ Positioning narrative for a named proposition.
 ### `context.icp(segment?)`
 ICP definition.
 - **Input**: optional `segment` to scope.
-- **Returns**: filters (industry, size, tech stack), persona definitions, qualification criteria.
+- **Returns**: filters (industry, size, tech stack), persona definitions, qualification criteria, hard disqualifiers, geography rules. May carry machine-readable config blocks for scripts (e.g. the `headline_prefilter` JSON block consumed by prospect-sourcing).
 
 ### `context.tone(channel)`
 Tone-of-voice rules for a channel.
 - **Input**: `channel` — `linkedin_dm`, `linkedin_post`, `email_cold`, `email_followup`, `proposal`, `discovery_call`.
-- **Returns**: voice patterns, word lists, pre-writing checklist.
+- **Returns**: default language, voice patterns, word lists, subject conventions, pre-writing checklist. Language is an org value — skills never assume one.
 
 ### `context.content(type, topic?)`
 Matching ContentAsset.

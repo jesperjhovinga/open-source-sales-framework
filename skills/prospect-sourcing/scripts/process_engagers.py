@@ -1,12 +1,105 @@
 """
 Prospect Sourcing — Engager Processing Script
 Reads Apify JSON, deduplicates, applies headline ICP pre-filter, outputs CSV.
-Usage: python3 process_engagers.py <input.json> <output.csv> [seed_url]
+Usage: python3 process_engagers.py <input.json> <output.csv> [seed_url] [--icp <path/to/icp.md>]
 """
-import json, csv, sys
+import json, csv, sys, re, argparse
 from datetime import date
+from pathlib import Path
 
-def run(input_path, output_path, seed_url=""):
+
+def resolve_icp_path():
+    """
+    Walk up from this script's own location to find the repo root (the
+    directory containing ACTIVE_CONTEXT.md), read the active org slug, and
+    return the path to that org's contexts/<slug>/icp.md.
+
+    Fails loud (prints a one-line message and exits 1) if ACTIVE_CONTEXT.md
+    can't be found, the slug is empty, or the slug is "_template".
+    """
+    here = Path(__file__).resolve()
+    root = None
+    for parent in here.parents:
+        if (parent / "ACTIVE_CONTEXT.md").is_file():
+            root = parent
+            break
+
+    if root is None:
+        print(f"ERROR: no ACTIVE_CONTEXT.md found in any parent directory of {here} — cannot resolve the active org.")
+        sys.exit(1)
+
+    active_path = root / "ACTIVE_CONTEXT.md"
+    slug = None
+    for line in active_path.read_text(encoding="utf-8").splitlines():
+        s = line.strip()
+        if not s or s.startswith("#") or s.startswith("<!--"):
+            continue
+        slug = s
+        break
+
+    if not slug:
+        print(f"ERROR: {active_path} has no non-comment slug line — cannot resolve the active org.")
+        sys.exit(1)
+    if slug == "_template":
+        print(f"ERROR: {active_path} names '_template' as the active org — set it to a real org slug.")
+        sys.exit(1)
+
+    return root / "contexts" / slug / "icp.md"
+
+
+def load_prefilter_config(icp_path):
+    """
+    Read the icp.md file at icp_path, extract the headline_prefilter JSON
+    config, and validate its shape.
+
+    Fails loud (prints a one-line message and exits 1) if the file is
+    missing, marked STATUS: UNFILLED, has no parseable ```json block
+    containing a "headline_prefilter" key, or any of the three required
+    keyword lists is missing/empty. No defaults, no fallback lists.
+    """
+    icp_path = Path(icp_path)
+    if not icp_path.is_file():
+        print(f"ERROR: icp.md not found at {icp_path} — cannot load headline pre-filter config.")
+        sys.exit(1)
+
+    content = icp_path.read_text(encoding="utf-8")
+
+    if "STATUS: UNFILLED" in content:
+        print(f"ERROR: {icp_path} is marked STATUS: UNFILLED — the icp surface is not filled in for this org.")
+        sys.exit(1)
+
+    blocks = re.findall(r"```json\s*(.*?)```", content, re.DOTALL)
+    if not blocks:
+        print(f"ERROR: no ```json fenced block found in {icp_path} — cannot load headline pre-filter config.")
+        sys.exit(1)
+
+    config = None
+    for block in blocks:
+        try:
+            parsed = json.loads(block)
+        except json.JSONDecodeError:
+            continue
+        if isinstance(parsed, dict) and "headline_prefilter" in parsed:
+            config = parsed["headline_prefilter"]
+            break
+
+    if config is None:
+        print(f"ERROR: no ```json block in {icp_path} contains a 'headline_prefilter' key — cannot load headline pre-filter config.")
+        sys.exit(1)
+
+    for key in ("disqualify_keywords", "buyer_title_keywords", "specialist_keywords"):
+        vals = config.get(key) if isinstance(config, dict) else None
+        if not isinstance(vals, list) or len(vals) == 0:
+            print(f"ERROR: {icp_path} headline_prefilter.{key} is missing or empty — cannot load headline pre-filter config.")
+            sys.exit(1)
+
+    return config["disqualify_keywords"], config["buyer_title_keywords"], config["specialist_keywords"]
+
+
+def run(input_path, output_path, seed_url="", icp_override=None):
+    icp_path = Path(icp_override) if icp_override else resolve_icp_path()
+    DISQUALIFY, BUYER, SPECIALIST = load_prefilter_config(icp_path)
+
     with open(input_path) as f:
         data = json.load(f)
 
@@ -34,22 +127,12 @@ def run(input_path, output_path, seed_url=""):
         if r.get("type") == "comment":
             actors[aid]["has_comment"] = True
 
-    # 3. Headline ICP pre-filter
-    GOV = ["gemeente","ministerie","rijks","overheid","waterschap","provincie",
-           "rijkswaterstaat","prorail","tennet","gasunie","liander","enexis","stedin",
-           "universiteit","hogeschool","ngo","stichting","government","municipality"]
-    BUYER = ["founder","co-founder","ceo","chief executive","managing director",
-             "md ","directeur","owner","eigenaar","managing partner",
-             "general manager","president","principal"]
-    SPECIALIST = ["consultant","consulting","advisor","advisory","adviseur","bureau",
-                  "studio","agency","boutique","specialist","strategy","strategist",
-                  "interim","freelance","coach","trainer","innovatie","innovation"]
-
+    # 3. Headline ICP pre-filter (keyword lists loaded from context.icp())
     def score_headline(pos):
         p = (pos or "").lower()
-        for s in GOV:
+        for s in DISQUALIFY:
             if s in p:
-                return "fail", f"gov/public signal: {s}"
+                return "fail", f"disqualifier keyword: {s}"
         has_buyer = any(t in p for t in BUYER)
         has_spec = any(s in p for s in SPECIALIST)
         if has_buyer and has_spec:
@@ -126,9 +209,20 @@ def run(input_path, output_path, seed_url=""):
     print(f"Saved to: {output_path}")
     return rows
 
+
+def parse_args(argv):
+    parser = argparse.ArgumentParser(add_help=False)
+    parser.add_argument("input_json")
+    parser.add_argument("output_csv")
+    parser.add_argument("seed_url", nargs="?", default="")
+    parser.add_argument("--icp", dest="icp", default=None,
+                         help="Path to an icp.md to read directly, bypassing ACTIVE_CONTEXT.md resolution.")
+    return parser.parse_args(argv)
+
+
 if __name__ == "__main__":
     if len(sys.argv) < 3:
-        print("Usage: python3 process_engagers.py <input.json> <output.csv> [seed_url]")
+        print("Usage: python3 process_engagers.py <input.json> <output.csv> [seed_url] [--icp <path/to/icp.md>]")
         sys.exit(1)
-    seed = sys.argv[3] if len(sys.argv) > 3 else ""
-    run(sys.argv[1], sys.argv[2], seed)
+    args = parse_args(sys.argv[1:])
+    run(args.input_json, args.output_csv, args.seed_url, icp_override=args.icp)

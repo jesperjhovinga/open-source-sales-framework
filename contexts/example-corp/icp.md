@@ -29,3 +29,29 @@ a legacy tool. Buyer has budget authority and operational pain TODAY.
 ## Winnability layer
 Fit is not enough — deprioritize when: over-hyped darling every vendor chases;
 locked into an ecosystem partner we can't displace; no reachable champion.
+
+## Headline pre-filter config
+Machine-readable config for `skills/prospect-sourcing/scripts/process_engagers.py`
+(headline-based pre-scoring of LinkedIn engagers). Keyword matching is
+case-insensitive substring.
+
+```json
+{
+  "headline_prefilter": {
+    "disqualify_keywords": [
+      "government", "municipal", "city of", "county", "federal",
+      "school district", "university", "public works", "non-profit", "nonprofit"
+    ],
+    "buyer_title_keywords": [
+      "owner", "ceo", "president", "vp operations", "vp of operations",
+      "ops director", "director of operations", "general manager", "coo",
+      "cfo", "managing partner", "founder"
+    ],
+    "specialist_keywords": [
+      "hvac", "plumbing", "electrical", "fire safety", "fire protection",
+      "mechanical contractor", "field service", "service manager",
+      "dispatch", "facilities", "refrigeration", "controls"
+    ]
+  }
+}
+```

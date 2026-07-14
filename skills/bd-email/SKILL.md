@@ -1,24 +1,19 @@
 ---
 name: bd-email
-description: Drafts warm BD emails in the BDOwner's voice — post-meeting follow-ups and recaps ("dit is wat ik heb gehoord"), re-engagement of contacts that went quiet, and relationship/event nudges. Trigger when the user says "follow-up email", "mail na de meeting", "terugkoppeling sturen", "recap email", "re-engage", "mail naar [name]", or wants to write a warm B2B email to someone there's already context with. This is for WARM email where a relationship or conversation already exists — for cold first-touch prospecting use cold-email, and for tailoring a specific event invitation use event-invite. Default to Dutch unless the thread is in English.
+description: Drafts warm BD emails in the BDOwner's voice — post-meeting follow-ups and recaps, re-engagement of contacts that went quiet, and relationship/event nudges. Trigger when the user says "follow-up email", "recap email", "re-engage", "mail to [name]", or wants to write a warm B2B email to someone there's already context with. This is for WARM email where a relationship or conversation already exists — for cold first-touch prospecting use cold-email, and for tailoring a specific event invitation use event-invite. Write in the org's default language (from the `context.tone` Language field); match the thread's language when replying.
 ---
 
 # BD Email (warm / follow-up)
 
-You draft warm business-development emails for the BDOwner (BDOwner) at ExampleOrg — a Dutch digital product agency that de-risks and accelerates building business-critical software. These are emails where context already exists: a meeting just happened, a contact went quiet, or a relationship needs a nudge. Cold first-touch is a different job — that's `cold-email`.
+You draft warm business-development emails for the BDOwner at the active org — what the org does and how it positions comes from `context.positioning(proposition_id)`, never from this skill. These are emails where context already exists: a meeting just happened, a contact went quiet, or a relationship needs a nudge. Cold first-touch is a different job — that's `cold-email`.
 
 ## Voice is the whole game here
 
-The draft has to sound like the BDOwner, not like an agency. The voice is defined in one place — `context.tone("email_followup")`. Resolve `context.*` surfaces per `core/path-conventions.md` against the org named in `ACTIVE_CONTEXT.md`. A missing surface file or one marked `STATUS: UNFILLED` is a blocking error — stop and tell the BDOwner; never guess. **Read it and follow it; don't restate or re-invent the rules here.** If for some reason it's unavailable, fall back to the essence: short, lowercase-casual, pull not push, open with the client's situation, keep his honest boundaries, no hype words — but the surface is the source of truth.
+The draft has to sound like the BDOwner, not like an agency. The voice is defined in one place — `context.tone("email_followup")`. Resolve `context.*` surfaces per `core/path-conventions.md` against the org named in `ACTIVE_CONTEXT.md`. A missing surface file or one marked `STATUS: UNFILLED` is a blocking error — stop and tell the BDOwner; never guess. **Read it and follow it; don't restate or re-invent the rules here.**
 
 ## Subject line convention
 
-the BDOwner formats subjects as **`[functie] onderwerp`** — a bracketed intent tag, then the topic. Examples:
-
-- `[vraag] uitnodigen voor event 9 juli`
-- `[terugkoppeling] ons gesprek van dinsdag`
-
-Always propose the subject in this format unless he's replying within an existing thread (then keep the thread's subject).
+Subjects follow the org's subject convention, defined in `context.tone("email_followup")` (or the channel in play). If the org defines none, keep the subject plain and specific. Always propose a subject unless he's replying within an existing thread (then keep the thread's subject).
 
 ## Process
 
@@ -28,13 +23,13 @@ Always propose the subject in this format unless he's replying within an existin
    - *Nudge / relationship:* short, warm, one clear low-friction ask.
 2. **Pull the context.** If a `CallNote` exists (per `core/path-conventions.md` generated-artifact paths), use it — it's your richest input for a recap. Otherwise use what the BDOwner pastes. Never invent specifics about what was discussed.
 3. **Draft short, then offer to go shorter.** the BDOwner almost always cuts. Give him one tight draft, not three paragraphs of options — but offer a shorter variant and a register shift (warmer / more formal) as quick follow-ups.
-4. **No fabrication.** No invented mutual connections, numbers, or commitments. If a claim needs a fact the BDOwner hasn't given, leave a clearly marked placeholder ([datum], [afzender]).
+4. **No fabrication.** No invented mutual connections, numbers, or commitments. If a claim needs a fact the BDOwner hasn't given, leave a clearly marked placeholder ([date], [sender]).
 
 ## Output
 
 - The email, ready to send: subject in his format, then body.
-- Match the language of the existing thread (Dutch by default).
-- After the draft, at most two short offers (e.g. "korter?" / "warmer of formeler?"). Don't over-explain your choices — the BDOwner edits fast and prefers to iterate than to read rationale.
+- Match the language of the existing thread; for new threads use the org's default language from the tone surface.
+- After the draft, at most two short offers (e.g. "shorter?" / "warmer or more formal?"). Don't over-explain your choices — the BDOwner edits fast and prefers to iterate than to read rationale.
 
 ## Composes with
 

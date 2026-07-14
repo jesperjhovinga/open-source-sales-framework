@@ -23,28 +23,20 @@ python3 <skill_dir>/scripts/process_engagers.py <input.json> <output_prefiltered
 
 Replace `<skill_dir>` with the directory containing this SKILL.md. This outputs a CSV with all unique engagers, scored as `soft_pass` (needs research) or `fail`.
 
+The script loads its headline pre-filter keywords from the active org's `context.icp` surface (the `headline_prefilter` JSON block in `icp.md`) and fails loud if the surface or block is missing. Pass `--icp <path>` to override resolution when testing.
+
 The script prints a summary — share it with the user before proceeding.
 
 ## Step 2 — Web research and ICP scoring
 
-For every `soft_pass` contact where a company name is visible in the `company_name` column or can be inferred from `job_title`, do a web search to verify:
-
-- Is the company NL-based?
-- Is the company size 15–150 people?
-- Is the revenue primarily commercial (not government-funded)?
-- Does the contact have decision authority (Founder/MD/CEO/Directeur/eigenaar)?
+For every `soft_pass` contact where a company name is visible in the `company_name` column or can be inferred from `job_title`, do a web search to verify the account against the ICP criteria from `context.icp()` — geography/reachability, size band, revenue model, and buyer authority per its persona definitions.
 
 **Scoring rules:**
-- `pass` — all four criteria confirmed
-- `soft_pass` — 3 of 4 confirmed, or founder/owner title without confirmed company size
-- `fail` — government/public sector confirmed, too large (>150), solo operator, or no decision authority
+- `pass` — all ICP criteria confirmed
+- `soft_pass` — all but one confirmed, or a buyer-authority title without confirmed company size
+- `fail` — any hard disqualifier from `context.icp()` confirmed, or no decision authority
 
-**Hard disqualifiers (immediate fail):**
-- Works at a gemeente, ministerie, provincie, waterschap, rijkswaterstaat, or similar
-- Works at a university or hogeschool
-- Company is primarily government-funded
-- Primary clients are public sector
-- Solo freelancer (below 15-person threshold)
+**Hard disqualifiers (immediate fail):** defined in `context.icp()` — any confirmed match is an immediate fail.
 
 Update the `icp_score` and `icp_notes` columns with your findings. Also fill in `company_size_est` where found.
 
