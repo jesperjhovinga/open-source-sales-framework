@@ -7,8 +7,11 @@ Order chosen for adoption impact: **C1+C3 → C2 → C5 → C4 → C6.**
 Shipped: `contexts/_template/` (blank adapter), `contexts/example-corp/` (demo
 adapter), `ACTIVE_CONTEXT.md` resolution rule, .gitignore guard.
 Remaining:
-- [ ] Convert all 22 raw-path references in 11 skills to contract-call form
+- [x] Convert raw-path references in skills to contract-call form
       (`context.tone(channel)` style) resolved via path-conventions.
+      (Pre-conversion audit counted 23 raw-path lines across 10 skills, not
+      the 22/11 originally claimed. Definitional `contexts/<org>/` mentions
+      in improve-framework-architecture stay — they describe the seam itself.)
 - [ ] Extract org residue: Dutch defaults in bd-email/event-invite/cold-call-prep
       → `context.tone` language field; NL disqualifier lists in
       prospect-sourcing skill + `process_engagers.py` → `context.icp` config;

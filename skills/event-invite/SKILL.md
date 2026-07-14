@@ -11,7 +11,7 @@ This skill is parametric — it works for any event. The current event's details
 
 ## Inputs to gather (ask only for what's missing)
 
-1. **The standard invite** — the canonical event text and facts (date, time, location, what's on, who else is coming). If the project is connected, check `contexts/<org>/signals-event/` or ask the BDOwner to paste it.
+1. **The standard invite** — the canonical event text and facts (date, time, location, what's on, who else is coming). If the project is connected, check the active Org Context for the event brief, or ask the BDOwner to paste it.
 2. **The contact** — name, role, company, and **relationship history**: never spoken (cold), spoken positively then went quiet, warm/booked, etc. This drives everything.
 3. **Channel** — email, LinkedIn DM, or WhatsApp.
 
@@ -36,7 +36,7 @@ When the BDOwner wants to attract C-level / strategic decision-makers and gently
 
 ## Voice
 
-Same voice as everything the BDOwner sends — defined once in the `context.tone` surface (`contexts/<org>/tone-of-voice.md`). Read it; don't restate the rules here. The surface covers the per-channel registers — for WhatsApp/LinkedIn DM that means lowercase, dry, short, deliberately unpolished. Authentic beats glossy.
+Same voice as everything the BDOwner sends — defined once via `context.tone(channel)`. Resolve `context.*` surfaces per `core/path-conventions.md` against the org named in `ACTIVE_CONTEXT.md`. A missing surface file or one marked `STATUS: UNFILLED` is a blocking error — stop and tell the BDOwner; never guess. Read it; don't restate the rules here. The surface covers the per-channel registers — for WhatsApp/LinkedIn DM that means lowercase, dry, short, deliberately unpolished. Authentic beats glossy.
 
 ## Process & output
 

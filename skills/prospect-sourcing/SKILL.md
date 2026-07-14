@@ -11,7 +11,7 @@ Turns raw LinkedIn engagement data (from Apify) into a scored, enriched prospect
 
 1. **Apify JSON file** — exported from `harvestapi/linkedin-profile-posts`. If not yet uploaded, ask the user to drop it into the session.
 2. **Seed profile URL** — the LinkedIn profile that was scraped (e.g. `https://www.linkedin.com/in/<seed-profile>/`). Ask if not provided.
-3. **ICP context** — read `contexts/<org>/icp.md` to load the ICP criteria before scoring.
+3. **Context surfaces** — `context.icp()` to load the ICP criteria before scoring. Resolve `context.*` surfaces per `core/path-conventions.md` against the org named in `ACTIVE_CONTEXT.md`. A missing surface file or one marked `STATUS: UNFILLED` is a blocking error — stop and tell the BDOwner; never guess.
 
 ## Step 1 — Parse and deduplicate
 

@@ -11,13 +11,13 @@ You produce a flat Dutch cold call script for the BDOwner at ExampleOrg. The out
 
 the BDOwner is BD at ExampleOrg, a Dutch digital product agency. ExampleOrg derisk and accelerates — from product idea to working software, faster and with less risk than going alone. Custom work every time, no fixed products.
 
-His voice is defined once in the `context.tone` surface (`contexts/<org>/tone-of-voice.md`) — read it; don't restate its rules here. For a cold call specifically: practitioner-to-practitioner, short sentences, no agency speak, and he never pitches.
+His voice is defined once via `context.tone(channel)` — read it; don't restate its rules here. Resolve `context.*` surfaces per `core/path-conventions.md` against the org named in `ACTIVE_CONTEXT.md`. A missing surface file or one marked `STATUS: UNFILLED` is a blocking error — stop and tell the BDOwner; never guess. For a cold call specifically: practitioner-to-practitioner, short sentences, no agency speak, and he never pitches.
 
 The goal of the call is one thing: **book a meeting**. Not to diagnose pain, not to qualify in depth, not to pitch. Just get a yes to a short, low-friction conversation.
 
 The ask should be easy to say yes to. Frame it from the prospect's perspective — a 20-minute conversation between two people in the same world, not a sales meeting.
 
-Words to avoid: the anti-hype list lives in `tone-of-voice.md`; for a cold call also avoid "oplossing", "propositie", "pitch", "demo" (too salesy for this format).
+Words to avoid: the anti-hype list lives in the `context.tone` surface; for a cold call also avoid "oplossing", "propositie", "pitch", "demo" (too salesy for this format).
 
 ## What you need from the AccountDossier
 

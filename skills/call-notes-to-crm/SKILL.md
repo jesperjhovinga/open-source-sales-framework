@@ -55,16 +55,16 @@ Add a `Business model:` or `Competitive landscape:` line only when the notes con
 
 This skill is portable — it works from pasted notes alone. But when the BDOwner's BD project folder is connected, it gets sharper:
 
-- Read the `context.tone` surface (`contexts/<org>/tone-of-voice.md`) so the "Read" and "ExampleOrg angle" sections sound like him — it's the single source for voice; don't restate its rules here.
-- If an `AccountDossier` exists at `contexts/<org>/dossiers/<account>.md`, reconcile your overview against it rather than re-deriving — and note any contradiction.
-- Save the finished CallNote to `contexts/<org>/call-notes/<account-slug>-<YYYY-MM-DD>.md` so it's versioned and so `bd-email` and future `discovery-call-prep` runs can consume it. Confirm the path with the BDOwner if the org slug is ambiguous.
+- Read the `context.tone(channel)` surface so the "Read" and "ExampleOrg angle" sections sound like him — it's the single source for voice; don't restate its rules here. Resolve `context.*` surfaces per `core/path-conventions.md` against the org named in `ACTIVE_CONTEXT.md`. A missing surface file or one marked `STATUS: UNFILLED` is a blocking error — stop and tell the BDOwner; never guess.
+- If an `AccountDossier` exists (per `core/path-conventions.md`), reconcile your overview against it rather than re-deriving — and note any contradiction.
+- Save the finished CallNote to the CallNote path per `core/path-conventions.md` so it's versioned and so `bd-email` and future `discovery-call-prep` runs can consume it. The org slug comes from `ACTIVE_CONTEXT.md`.
 
 ## Delivery — port to a CRM, don't assume copy-paste
 
 The CallNote should travel to wherever the BDOwner's CRM lives. The destination is **pluggable, not hardcoded** — this is the `context.connector("crm")` surface in `core/context-contract.md`. Pick the delivery path in this order:
 
 1. **A bound CRM connector** — if a CRM connector is configured/connected (Apollo, the CRM (example: a mid-market CRM), HubSpot, or whatever is wired to `context.connector("crm")`), port the CallNote into it: create/update the Account + Contact and log the note (or task) directly. Confirm the target account with the BDOwner before writing.
-2. **The project folder** — also save to `contexts/<org>/call-notes/<account-slug>-<YYYY-MM-DD>.md` for version history, regardless of connector.
+2. **The project folder** — also save to the CallNote path per `core/path-conventions.md` for version history, regardless of connector.
 3. **Paste text (universal fallback)** — if no CRM connector is bound, output the flat note for manual paste. This is the floor, not the goal.
 
 Do not assume copy-paste when a connector is available, and do not hardcode a specific CRM — read what's bound and use it. The flat-text format below is what gets pasted *or* written into the note field either way.

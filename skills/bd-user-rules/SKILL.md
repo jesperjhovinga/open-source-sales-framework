@@ -51,7 +51,7 @@ Even if the BDOwner says "just send it," the safe default is to show the final a
 - Use his exact phrasing, names, and conventions — including the subject format `[functie] onderwerp`.
 - Extend a draft he gives you; don't rewrite it from scratch.
 - Don't add claims, features, or sections he didn't ask for.
-- Honour his tone of voice — the `context.tone` surface (`contexts/<org>/tone-of-voice.md`) is the single source. Read it; don't restate its rules here. When in doubt: shorter, more honest, and closer to how he actually phrases things.
+- Honour his tone of voice — `context.tone(channel)` is the single source. Resolve `context.*` surfaces per `core/path-conventions.md` against the org named in `ACTIVE_CONTEXT.md`. A missing surface file or one marked `STATUS: UNFILLED` is a blocking error — stop and tell the BDOwner; never guess. Read it; don't restate its rules here. When in doubt: shorter, more honest, and closer to how he actually phrases things.
 
 ## Tool & system hygiene
 

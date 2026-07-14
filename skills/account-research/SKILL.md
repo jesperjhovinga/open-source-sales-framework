@@ -12,10 +12,12 @@ Produces a structured AccountDossier for a single Account. The dossier gives the
 1. **Account name** — company to research. If not provided, ask.
 2. **Contact name and LinkedIn URL** — the person at the account (from prospect CSV or user input).
 3. **Warm signal** — what LinkedIn engagement or research led to this account being flagged (needed for the entry hypothesis).
-4. **ExampleOrg context** — read these before writing the dossier:
-   - `contexts/<org>/icp.md` — ICP criteria (`context.icp`)
-   - `contexts/<org>/positioning.md` — value, focus, propositions (`context.positioning`)
-   - `contexts/<org>/tone-of-voice.md` — how it's phrased (`context.tone`)
+4. **Context surfaces** — read these before writing the dossier:
+   - `context.icp()` — ICP criteria
+   - `context.positioning(proposition_id)` — value, focus, propositions
+   - `context.tone(channel)` — how it's phrased
+
+   Resolve `context.*` surfaces per `core/path-conventions.md` against the org named in `ACTIVE_CONTEXT.md`. A missing surface file or one marked `STATUS: UNFILLED` is a blocking error — stop and tell the BDOwner; never guess.
 
 ## Research process
 
@@ -52,8 +54,7 @@ If public data is thin on any section, write "insufficient public information" �
 
 ## Dossier format
 
-Save the dossier as markdown to:
-`contexts/<org>/dossiers/<account-slug>.md`
+Save the dossier as markdown to the AccountDossier path per `core/path-conventions.md`.
 
 Use this exact structure:
 

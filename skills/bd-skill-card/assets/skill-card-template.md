@@ -21,7 +21,7 @@
 - **External sources:** {{web, LinkedIn, pasted notes… — or "none"}}
 
 ## Outputs
-- **Artifacts produced:** {{name + path, e.g. CallNote → contexts/<org>/call-notes/<slug>-<date>.md — or "none"}}
+- **Artifacts produced:** {{name + path, e.g. CallNote → path per `core/path-conventions.md` — or "none"}}
 - **Events emitted:** {{e.g. OutreachDrafted — or "none"}}
 - **Writes to external systems:** {{e.g. CRM note via connector — or "none"}}
 

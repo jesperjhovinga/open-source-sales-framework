@@ -9,7 +9,7 @@ origin: cuopt-skill-evolution (NVIDIA/skills), adapted for BD
 
 This framework gets better the same way every time: do the BD task, notice when a generalizable learning surfaced, judge how confident you are in it, then propose an update the BDOwner approves before anything is written. The presence or absence of a hard signal (a reply, a low edit rate) changes the *confidence* on a proposal, not the steps.
 
-This is the meta-skill that turns one-off corrections into durable improvements. the BDOwner already does this by hand — versioning `icp.md`, banking lessons in `sourcing-method.md`, logging decisions in `docs/decisions.md`. This skill makes it systematic.
+This is the meta-skill that turns one-off corrections into durable improvements. the BDOwner already does this by hand — versioning the `context.icp` surface, banking lessons in the org's sourcing-method notes, logging decisions in `docs/decisions.md`. This skill makes it systematic.
 
 ## Trigger conditions
 
@@ -51,7 +51,7 @@ If none of these is available, `scored: no` — proceed, flagged for careful rev
 
 ## Distillation
 
-When a learning holds, distill it into the framework. Match the writing style already in the target file — and note these rules echo the BDOwner's own tone of voice (`contexts/<org>/tone-of-voice.md`), so they apply to the skill prose too:
+When a learning holds, distill it into the framework. Match the writing style already in the target file — and note these rules echo the BDOwner's own tone of voice (the `context.tone` surface), so they apply to the skill prose too:
 
 - **Imperative and concise.** "Open with the client's world, not a pitch" beats a paragraph of hedging.
 - **Explain the why.** A rule with no rationale rots — readers can't tell if it still applies. Pair every rule with its reason ("flag third-party figures as rough, because the BDOwner corrects invented specificity more than any other thing").
@@ -62,7 +62,7 @@ When a learning holds, distill it into the framework. Match the writing style al
 
 Put the learning where it has the widest effect, and don't duplicate it. This repo's bounded-context split (`STATE.md`) decides the target:
 
-1. **Org Context file** (`contexts/<org>/`) — if the learning is about *who to target*, *how the BDOwner sounds*, *positioning*, or *sourcing lessons*, it goes in `icp.md`, `tone-of-voice.md`, `positioning.md`, or `sourcing-method.md`. Highest impact, because every skill reads these via the context contract. Most BD learnings land here. Keep HOW (phrasing → `tone-of-voice.md`) separate from WHAT (value/sectors/propositions → `positioning.md`).
+1. **Org Context file** (`contexts/<org>/`) — if the learning is about *who to target*, *how the BDOwner sounds*, *positioning*, or *sourcing lessons*, it goes in the `context.icp`, `context.tone`, or `context.positioning` surface of the active org (files resolved per `core/path-conventions.md`), or the org's sourcing-method notes (org-local; not yet a contract surface). Resolve `context.*` surfaces per `core/path-conventions.md` against the org named in `ACTIVE_CONTEXT.md`. A missing surface file or one marked `STATUS: UNFILLED` is a blocking error — stop and tell the BDOwner; never guess. Highest impact, because every skill reads these via the context contract. Most BD learnings land here. Keep HOW (phrasing → `context.tone`) separate from WHAT (value/sectors/propositions → `context.positioning`).
 2. **A spec** (`specs/<id>.spec.md`) — if it changes the *shape* of a workflow (acceptance criteria, process steps), update the spec, since the spec is the contract.
 3. **A specific skill** (`skills/<name>/SKILL.md`) — if it's about executing one workflow: `bd-email`, `call-notes-to-crm`, `event-invite`, `cold-call-prep`, `account-research`, `prospect-sourcing`.
 4. **A new skill** — only if it fits nowhere above.
@@ -75,7 +75,7 @@ Present to the BDOwner with these fields. The diff carries most of the meaning.
 
 ```text
 Skill update proposal:
-  Target:  contexts/<org>/icp.md  (or specs/<id>.spec.md, skills/<name>/SKILL.md)
+  Target:  `context.icp` surface of the active org  (or specs/<id>.spec.md, skills/<name>/SKILL.md)
   Trigger: <what surfaced this — including prior occurrences if recurring>
   Scored:  yes — <how, e.g. "the BDOwner shipped with <10% edits", "fact matches dossier">
            no  — review carefully; not validated against a signal
