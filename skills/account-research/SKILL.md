@@ -56,6 +56,15 @@ If public data is thin on any section, write "insufficient public information" �
 
 Save the dossier as markdown to the AccountDossier path per `core/path-conventions.md`.
 
+For the ICP fit section: read `context.icp()` and build one row per
+qualification criterion it defines (for example: size band, revenue type,
+buyer persona, geography/reachability, differentiation — whatever that org's
+ICP actually specifies). Do not use a fixed list and do not fall back to
+default criteria if `context.icp()` is missing or `STATUS: UNFILLED` — that is
+a blocking error per `core/context-contract.md`; stop and tell the BDOwner
+instead of guessing. Add a final row for the ICP's disqualifiers (also
+returned by `context.icp()`).
+
 Use this exact structure:
 
 ```markdown
@@ -85,13 +94,6 @@ Use this exact structure:
 ---
 
 ## ICP fit
-Read `context.icp()` and build one row per qualification criterion it defines
-(for example: size band, revenue type, buyer persona, geography/reachability,
-differentiation — whatever that org's ICP actually specifies). Do not use a
-fixed list and do not fall back to default criteria if `context.icp()` is
-missing or `STATUS: UNFILLED` — that is a blocking error per
-`core/context-contract.md`; stop and tell the BDOwner instead of guessing.
-Add a final row for the ICP's disqualifiers (also returned by `context.icp()`).
 
 | Criterion | Signal | Score |
 |---|---|---|
