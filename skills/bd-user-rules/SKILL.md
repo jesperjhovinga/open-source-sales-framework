@@ -1,8 +1,8 @@
 ---
 name: bd-user-rules
 version: "0.1.0"
-description: Base behavioural rules for any agent doing BD work for the human owner at the org — the house rules every other BD skill inherits. Read this at the start of any BD task: prospecting, account research, call notes, outreach, prep, event invites, CRM updates. Covers when to ask vs. act, never auto-sending or auto-writing without confirmation, no fabricated claims, honouring tone of voice, and ending with a clear result. Adapted from NVIDIA's cuopt-user-rules for the BD Automation Framework.
-origin: cuopt-user-rules (NVIDIA/skills), adapted for BD
+description: "Base behavioural rules for any agent doing BD work for the human owner at the org — the house rules every other BD skill inherits. Read this at the start of any BD task: prospecting, account research, call notes, outreach, prep, event invites, CRM updates. Covers when to ask vs. act, never auto-sending or auto-writing without confirmation, no fabricated claims, honouring tone of voice, and ending with a clear result. Adapted from NVIDIA's cuopt-user-rules for the BD Automation Framework."
+origin: "cuopt-user-rules (NVIDIA/skills), adapted for BD"
 ---
 
 # BD User Rules
