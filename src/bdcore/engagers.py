@@ -32,9 +32,25 @@ FIELDS = [
     "sourced_date",
 ]
 
-# Headline separators splitting "<title> at <company>". Input-parsing heuristics,
-# not ICP policy — see docs/roadmap.md C1+C3 for the open question on whether
-# these belong in the headline_prefilter config instead.
+# Headline separators splitting "<title> SEP <company>" — title-first only.
+# These parse the *prospect's* own LinkedIn headline, not the org's writing:
+# whoever wrote "<title> bij <company>" did so in their own language,
+# regardless of which org is prospecting them. So this is an input-parsing
+# heuristic keyed to how LinkedIn users write headlines, not org policy —
+# settled per docs/roadmap.md C1+C3. Adding another language's title-first
+# separator is a safe feature addition, not a leak.
+#
+# Deliberately NOT added: fullwidth "｜" (U+FF5C). A company-first headline
+# ("<company>｜<title>") is a common construction with this punctuation — the
+# reverse of every separator below. Matching it with the current title-first
+# split would silently invert job_title and company_name (a wrong
+# company_name then flows into the CSV and into research). There is no
+# per-separator order here, and the risk is a confident wrong answer rather
+# than a visible failure, so the safer choice is to leave it unmatched: it
+# falls through to `return position, ""` (whole headline in job_title,
+# company_name empty) — the same "needs enrichment" fallback already used for
+# missing data. Support company-first separators only once split_position
+# takes an explicit per-separator order.
 POSITION_SEPARATORS = (" at ", " bij ", " @ ", " - ", " | ")
 
 REQUIRED_PREFILTER_KEYS = ("disqualify_keywords", "buyer_title_keywords", "specialist_keywords")

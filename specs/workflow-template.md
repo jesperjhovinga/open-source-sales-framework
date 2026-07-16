@@ -29,7 +29,8 @@ Domain entities the workflow reads (e.g., `Account`, `Opportunity`).
 Every call through the context contract, explicit. Example:
 - `context.positioning("example_prop_a")`
 - `context.icp()`
-- `context.tone("linkedin_dm")`
+- `context.tone(channel)` — the channel is this workflow's own choice, not the
+  template's; the valid set is defined in `core/context-contract.md`.
 
 ### From external systems
 Connectors required (and what's read from them).
@@ -47,7 +48,7 @@ Named outputs (e.g., `AccountDossier` — markdown doc at a path).
 Glossary events (e.g., `AccountIdentified`).
 
 ### Writes to external systems
-Any CRM / Drive / LinkedIn writes, with scope.
+Whichever connectors this workflow writes to (per `context.connector`), with scope.
 
 ## Acceptance criteria
 

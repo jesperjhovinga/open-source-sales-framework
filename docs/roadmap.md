@@ -38,6 +38,26 @@ Remaining:
       `core/`, `specs/`, `skills/`, including the callnote-template.md worked
       example, which was rewritten in place with generic bracket placeholders
       rather than moved to `contexts/example-corp/`.
+- [x] **Headline-separator question, settled** (portability test F7): the
+      language-heuristic classification above is the final answer, not an
+      open one — restated as a plain code comment on `POSITION_SEPARATORS`
+      in `src/bdcore/engagers.py` instead of a pointer back to this roadmap
+      item. The order assumption underneath it was also checked: every
+      current separator implies `<title> SEP <company>`. Verified
+      `split_position` against a company-first Japanese headline built with
+      fullwidth `｜` (U+FF5C) — no current separator matches it, so it falls
+      through to the safe `(position, "")` case (whole headline as title,
+      empty company — the same "needs enrichment" path already used for
+      missing data). Fullwidth `｜` was deliberately **not** added: its
+      common convention is `<company>｜<title>`, the reverse of every
+      separator already in the tuple, and matching it with the existing
+      title-first split would silently invert `job_title`/`company_name` —
+      a wrong `company_name` flowing into the CSV is worse than an
+      unsplit headline. Adding more *title-first* languages' separators
+      remains a safe feature addition; company-first separators need an
+      explicit per-separator order on `split_position`, not implemented.
+      Test added: a company-first fullwidth-pipe headline asserting the
+      fall-through, not an inversion.
 - [ ] **Known limitation, not yet fixed**: `bd check seam` is a keyword scan for
       denylisted org proper nouns (`RULES` in `src/bdcore/seam.py`), now run
       over `core/`, `specs/`, `skills/`, and `src/bdcore/` itself. It cannot and

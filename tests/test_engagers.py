@@ -105,6 +105,16 @@ def test_split_position(position, expected):
     assert split_position(position) == expected
 
 
+def test_split_position_company_first_headline_falls_through_safely():
+    # Fullwidth "｜" (U+FF5C) commonly separates "<company>｜<title>" — the
+    # reverse order of every separator in POSITION_SEPARATORS. It must NOT be
+    # matched as if it were title-first: that would silently swap job_title
+    # and company_name. The safe outcome is the whole headline as the title
+    # with company left empty for enrichment, not an inverted split.
+    headline = "株式会社ミナトアドテク｜データ基盤エンジニア"
+    assert split_position(headline) == (headline, "")
+
+
 @pytest.mark.parametrize(
     ("name", "expected"),
     [
