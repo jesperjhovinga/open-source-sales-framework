@@ -42,7 +42,7 @@ Entry point: [Why there's a conversation. The specific hook.]
 
 Read from the meeting: [Your honest assessment — warmth, fit, where it could go. Mark inferences.]
 
-Opportunity / org angle: [Where the org helps and where it deliberately doesn't.]
+Opportunity / Our angle: [Where the org helps and where it deliberately doesn't.]
 
 Next actions: [Numbered, concrete, with owner where known.]
 
