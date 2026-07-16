@@ -1459,7 +1459,8 @@ uv run python -c "from bdcore.review import pending; from pathlib import Path; p
 printf 'Hi Jane, I really enjoyed your talk on field service scheduling.\n' > /tmp/edited.md
 uv run bd log-approval acme-jane-001 --spec outreach-drafting --outcome approved \
   --before contexts/example-corp/outreach/acme-jane-001.md --after /tmp/edited.md
-# expect: "Logged approved for outreach-drafting v0.1 (edit rate 20%)."
+# expect: "Logged approved for outreach-drafting v0.1 (edit rate 18%)."
+# (2 words changed of the 11-word longer text — verified against the real formula.)
 
 uv run bd graduation-status outreach-drafting     # expect: insufficient data, 1/30
 cat contexts/example-corp/ledger/approvals.jsonl  # expect: exactly one JSON line
