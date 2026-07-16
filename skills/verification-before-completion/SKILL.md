@@ -46,7 +46,7 @@ Skip a step and you're guessing, not verifying.
 | A fact about an account/contact | the dossier, CallNote, or a cited source | memory of the conversation |
 | "X occurrences / N skills / the file says Y" | an actual grep / re-read of the file | an estimate or earlier glance |
 | An audit / review finding | re-reading the specific lines it's about | a subagent's summary taken on trust |
-| "This skill/script works" | running it (e.g. `validate_card.py`) and reading the output | "it should work" |
+| "This skill/script works" | running it (e.g. `bd validate-card`) and reading the output | "it should work" |
 | "The fact checks out" | the source quote + URL (per `docs/decisions.md` Decision 2) | confidence |
 | A summary from a subagent | spot-checking it against the underlying file | the subagent said so |
 

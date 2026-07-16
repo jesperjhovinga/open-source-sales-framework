@@ -32,7 +32,7 @@ This framework already names most of what a card needs — reuse that vocabulary
 2. Fill the card template in `assets/skill-card-template.md`, sourcing each field from those files. Map the skill onto the framework vocabulary above — e.g. if its body says "never send, draft only", its rep-risk zone is Draft→Approve.
 3. For anything the files don't support, write `HUMAN-REQUIRED: <what to confirm>` so the BDOwner sees exactly what to check.
 4. Save the card next to the skill as `skills/<name>/skill-card.md`.
-5. Validate: run `scripts/validate_card.py skills/<name>/skill-card.md`. It fails if required sections are missing or any `HUMAN-REQUIRED` / `{{placeholder}}` markers remain — clear them (by sourcing the value or confirming with the BDOwner) before calling the card done.
+5. Validate: run `bd validate-card skills/<name>/skill-card.md`. It fails if required sections are missing or any `HUMAN-REQUIRED` / `{{placeholder}}` markers remain — clear them (by sourcing the value or confirming with the BDOwner) before calling the card done.
 6. Tell the BDOwner where the card is and list any `HUMAN-REQUIRED` fields he still needs to confirm.
 
 ## Card contents (see the template for the exact layout)

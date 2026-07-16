@@ -1,6 +1,21 @@
 .DS_Store
 **/.DS_Store
+
 # Real org contexts never enter this repo — only the template and the demo adapter.
 contexts/*
 !contexts/_template/
 !contexts/example-corp/
+
+# Secrets never enter this repo. .env.example carries the shape, never the values.
+.env
+.env.*
+!.env.example
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.coverage
+dist/

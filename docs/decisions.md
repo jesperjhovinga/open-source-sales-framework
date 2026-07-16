@@ -117,6 +117,13 @@ Resolved 2026-04-28 with AI-first, autonomy-leaning best-practice defaults. Each
 
 **Revisit when**: a real cross-runtime requirement appears (e.g., embedding agent in a non-Claude product).
 
+**Amendment (v0.2)**: still true — the runtime *is* Claude, and skills remain the
+implementation of every spec. `src/bdcore/` is not a second runtime and implements
+no workflow: it holds the deterministic work that has an objectively right answer
+(parse a JSON export, check a card's shape, grep for seam residue) and that a
+language model should not be re-deriving per call. Skills invoke it via the `bd`
+CLI. If a thing requires judgement, it belongs in a skill, not in `bdcore`.
+
 ---
 
 ## Decision 9 — Context surface read mechanism
@@ -128,6 +135,21 @@ Resolved 2026-04-28 with AI-first, autonomy-leaning best-practice defaults. Each
 **Why**: Simplest thing that works. A wrapper library is premature.
 
 **Revisit when**: agent needs typed access (e.g., structured ICP filters as objects). At that point, formalize as a Python or Node module wrapping the file reads.
+
+**Amendment (v0.2)**: the revisit trigger fired. The `headline_prefilter` JSON
+block in `context.icp` is exactly the "structured ICP filters as objects" case
+this decision named, and `bd source` needs typed access to it. The resolver is
+now `src/bdcore/context.py`, wrapping the same file reads against the same
+convention.
+
+Markdown-as-API is unchanged: surfaces are still markdown, still authored by
+hand, still readable by an agent doing a direct file read. The wrapper is for
+*code* that needs a surface, and it exists because the resolution rules —
+active-org lookup, Rule 3 fail-loud, Rule 5 UNFILLED-is-missing — were being
+reimplemented ad hoc inside a sourcing script, where they were untestable and
+would have been copy-pasted into the next script that needed them. One
+implementation, covered by tests. Agents reading surfaces directly is still
+correct and still the common case.
 
 ---
 

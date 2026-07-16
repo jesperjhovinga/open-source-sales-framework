@@ -7,8 +7,11 @@ How the agent finds files in BD Core and Org Context. v0.1 uses direct file read
 - `core/language/glossary.md` — ubiquitous language.
 - `core/context-contract.md` — Core ↔ Context API contract.
 - `core/path-conventions.md` — this file.
-- `core/methodology/` — WbD blueprints and other framework references.
-- `core/archetypes/` — agent archetype specs (Researcher, Drafter, Summarizer, Reviewer, Coach).
+Agent archetypes (Researcher, Drafter, Summarizer, Reviewer, Coach) live in
+`core/language/glossary.md`.
+
+This list documents paths that exist. Paths the framework intends to add are
+tracked in `docs/roadmap.md` (C6) until they do — a convention is not a plan.
 
 ## Org Context paths
 
@@ -37,7 +40,8 @@ For each Org Context at `contexts/<org-slug>/`:
 
 - `specs/<spec-id>.spec.md` — workflow specs.
 - `skills/<spec-id>/SKILL.md` — Claude skill implementing a spec.
-- `tests/<spec-id>.cases.md` — eval harness cases.
+- `tests/cases/<spec-id>.cases.md` — eval harness cases (Decision 4; not yet built, roadmap C6).
+- `tests/test_*.py` — the Python suite for `src/bdcore/`.
 
 ## Resolver behavior
 

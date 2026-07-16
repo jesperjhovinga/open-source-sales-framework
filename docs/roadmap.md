@@ -24,7 +24,7 @@ Remaining:
       offer-format names) → `context.icp`/`context.positioning`;
       bd-user-rules hardcoded subject convention → `context.tone`;
       prospect-sourcing.spec.md "Netherlands filter" step → fold into the
-      C2 spec↔skill reconciliation; decide whether `process_engagers.py`'s
+      C2 spec↔skill reconciliation; decide whether `src/bdcore/engagers.py`'s
       multilingual headline separators (" at ", " bij ", …) are input-parsing
       heuristics (fine) or belong in `headline_prefilter` config.
 
@@ -51,5 +51,8 @@ Remaining:
 - [ ] `.claude-plugin/plugin.json` (Decision 8).
 - [ ] `tests/<spec>.cases.md` per implemented spec (Decision 4).
 - [ ] `core/methodology/` SPICED + Bowtie summaries (unblocks discovery-call-prep).
+- [ ] Decide `core/archetypes/`: build it, or accept that the glossary's archetype
+      list is the whole story and drop the path from the convention for good.
+      (Removed from path-conventions in the tooling PR — it never existed.)
 - [ ] One frontmatter version scheme; canonical proposition IDs (`example_prop_a/b`).
 - [ ] Fresh `STATE.md`; CONTRIBUTING.md; fix all doc claims to match reality.

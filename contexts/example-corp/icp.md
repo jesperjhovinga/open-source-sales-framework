@@ -31,7 +31,7 @@ Fit is not enough — deprioritize when: over-hyped darling every vendor chases;
 locked into an ecosystem partner we can't displace; no reachable champion.
 
 ## Headline pre-filter config
-Machine-readable config for `skills/prospect-sourcing/scripts/process_engagers.py`
+Machine-readable config for `bd source` (see `src/bdcore/engagers.py`)
 (headline-based pre-scoring of LinkedIn engagers). Keyword matching is
 case-insensitive substring.
 
