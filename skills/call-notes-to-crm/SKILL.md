@@ -63,7 +63,7 @@ This skill is portable — it works from pasted notes alone. But when the BDOwne
 
 The CallNote should travel to wherever the BDOwner's CRM lives. The destination is **pluggable, not hardcoded** — this is the `context.connector("crm")` surface in `core/context-contract.md`. Pick the delivery path in this order:
 
-1. **A bound CRM connector** — if a CRM connector is configured/connected (Apollo, the CRM (example: a mid-market CRM), HubSpot, or whatever is wired to `context.connector("crm")`), port the CallNote into it: create/update the Account + Contact and log the note (or task) directly. Confirm the target account with the BDOwner before writing.
+1. **A bound CRM connector** — if a CRM connector is configured/connected (Apollo, HubSpot, or whatever is wired to `context.connector("crm")`), port the CallNote into it: create/update the Account + Contact and log the note (or task) directly. Confirm the target account with the BDOwner before writing.
 2. **The project folder** — also save to the CallNote path per `core/path-conventions.md` for version history, regardless of connector.
 3. **Paste text (universal fallback)** — if no CRM connector is bound, output the flat note for manual paste. This is the floor, not the goal.
 

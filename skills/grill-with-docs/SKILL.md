@@ -13,8 +13,8 @@ If a question can be answered by reading existing files in the project, read the
 
 Look for existing documentation in the project:
 
-- `CONTEXT.md` at the root — a domain glossary (not a spec, not implementation notes — just terms)
-- `docs/adr/` — Architecture Decision Records for hard-to-reverse decisions
+- `core/language/glossary.md` — the ubiquitous language (not a spec, not implementation notes — just terms)
+- `docs/decisions.md` — settled decisions, with the rationale, for hard-to-reverse choices
 
 Create these files lazily — only when you have something to write.
 

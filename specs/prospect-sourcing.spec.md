@@ -12,7 +12,7 @@
 
 Surface net-new prospect Contacts and Accounts by mining engagement on LinkedIn posts from a known ICP persona. People who engage with a target persona's content have demonstrated interest in the same topic space — they are warm, unsolicited leads.
 
-This workflow produces a deduplicated, ICP-filtered, enriched contact list ready for import into the CRM (example: a mid-market CRM) and for seeding the `account-research` spec.
+This workflow produces a deduplicated, ICP-filtered, enriched contact list ready for import into the CRM and for seeding the `account-research` spec.
 
 ---
 
@@ -64,7 +64,7 @@ This workflow produces a deduplicated, ICP-filtered, enriched contact list ready
 
 ## Output
 
-### CSV columns (the CRM (example: a mid-market CRM)-ready)
+### CSV columns (CRM-ready)
 
 | Column | Source |
 |--------|--------|
@@ -98,7 +98,7 @@ This workflow produces a deduplicated, ICP-filtered, enriched contact list ready
 - Every Contact has `icp_score` populated with a non-empty `icp_notes` justification.
 - Enrichment attempted for all pass + soft_pass contacts.
 - `fail` contacts excluded from CSV (or optionally kept in a separate tab/file if BDOwner wants to review).
-- CSV opens cleanly in Excel and maps to the CRM (example: a mid-market CRM) import template without manual column renames.
+- CSV opens cleanly in Excel and maps to the CRM import template without manual column renames.
 - Workflow completes in under 15 minutes from data drop to CSV delivery.
 
 ---
@@ -106,7 +106,7 @@ This workflow produces a deduplicated, ICP-filtered, enriched contact list ready
 ## Human-in-the-loop gate
 
 - **Autonomous** for scrape → dedup → filter → enrich → CSV.
-- BDOwner reviews `soft_pass` rows before deciding to import them into the CRM (example: a mid-market CRM).
+- BDOwner reviews `soft_pass` rows before deciding to import them into the CRM.
 - BDOwner triggers `account-research` spec manually on high-priority Accounts from the output.
 
 ---
@@ -123,6 +123,6 @@ This workflow produces a deduplicated, ICP-filtered, enriched contact list ready
 
 - Automate Apify trigger via API (eliminate manual scrape step).
 - Add Sales Navigator scope for richer engagement data.
-- Cross-reference output against existing the CRM (example: a mid-market CRM) contacts via the CRM (example: a mid-market CRM) MCP to flag known contacts.
+- Cross-reference output against existing CRM contacts via the CRM MCP to flag known contacts.
 - Weighted ICP scoring (numeric score 0–100) instead of pass/soft_pass/fail.
 - Auto-trigger `account-research` for all `pass` accounts.
