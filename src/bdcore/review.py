@@ -19,13 +19,17 @@ from typing import NamedTuple
 from bdcore.context import active_org, find_root
 from bdcore.graduation import all_statuses
 from bdcore.ledger import APPROVED, REJECTED, append, read_all, record
-from bdcore.specs import draft_approve_specs
+from bdcore.specs import DRAFT_APPROVE, draft_approve_specs
 
 # spec-id -> artifact dir, per the generated-artifact paths in core/path-conventions.md.
 ARTIFACT_DIRS = {
     "outreach-drafting": "outreach",
     "discovery-call-prep": "prep",
 }
+
+
+class ReviewError(Exception):
+    """A Draft→Approve spec cannot be reviewed as configured. Always a blocking error."""
 
 
 class Pending(NamedTuple):
@@ -44,8 +48,11 @@ def pending(root: Path | None = None) -> list[Pending]:
     items: list[Pending] = []
     for spec in draft_approve_specs(root):
         subdir = ARTIFACT_DIRS.get(spec.id)
-        if not subdir:
-            continue
+        if subdir is None:
+            raise ReviewError(
+                f"spec '{spec.id}' is zoned {DRAFT_APPROVE} but has no ARTIFACT_DIRS entry — "
+                f"its drafts would never reach review. Add its output dir (see core/path-conventions.md)."
+            )
         for path in sorted((org_dir / subdir).glob("*.md")):
             run = path.stem
             if run not in decided:

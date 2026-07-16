@@ -1,7 +1,7 @@
 import pytest
 
 from bdcore.ledger import APPROVED, append, record
-from bdcore.review import pending, render
+from bdcore.review import ARTIFACT_DIRS, ReviewError, pending, render
 
 
 @pytest.fixture
@@ -49,8 +49,11 @@ def test_pending_carries_the_draft_text(repo):
     assert pending(repo)[0].text == "Hi Jane, specific hook."
 
 
-def test_autonomous_specs_have_no_pending_queue(repo):
-    # account-research is Autonomous — it has no approval step to queue.
+def test_autonomous_specs_have_no_pending_queue(repo, monkeypatch):
+    # account-research is Autonomous — it has no approval step to queue, even
+    # when it's mapped in ARTIFACT_DIRS and has a draft sitting on disk. If this
+    # only passed because the spec was unmapped, mapping it would break the test.
+    monkeypatch.setitem(ARTIFACT_DIRS, "account-research", "dossiers")
     (repo / "contexts" / "acme" / "dossiers").mkdir()
     (repo / "contexts" / "acme" / "dossiers" / "acme.md").write_text("dossier", encoding="utf-8")
     assert pending(repo) == []
@@ -66,3 +69,21 @@ def test_render_lists_a_pending_draft_and_escapes_it(repo):
 
 def test_render_shows_graduation_status(repo):
     assert "insufficient data" in render(repo)
+
+
+def test_unmapped_draft_approve_spec_raises(repo):
+    # A Draft→Approve spec with no ARTIFACT_DIRS entry must fail loud, not be
+    # silently skipped — its drafts would otherwise never reach review.
+    (repo / "specs" / "new-thing.spec.md").write_text(
+        "**ID**: `new-thing`\n**Version**: `v0.1`\n**Rep-risk zone**: Draft→Approve\n",
+        encoding="utf-8",
+    )
+    with pytest.raises(ReviewError, match="new-thing"):
+        pending(repo)
+
+
+def test_render_escapes_the_run_and_spec_ids(repo):
+    draft(repo, 'x" onmouseover="alert(1)')
+    html = render(repo)
+    assert 'x" onmouseover="alert(1)' not in html
+    assert "x&quot; onmouseover=&quot;alert(1)" in html

@@ -13,6 +13,7 @@ import typer
 from bdcore import cards, doctruth, engagers, graduation, ledger, review, seam
 from bdcore.context import ContextError, active_org, find_root
 from bdcore.ledger import LedgerError
+from bdcore.review import ReviewError
 from bdcore.specs import SpecError
 
 app = typer.Typer(no_args_is_help=True, help="BD Core — validate, source, and enforce the seam.")
@@ -151,7 +152,12 @@ def review_cmd(
     port: Annotated[int, typer.Option("--port", help="Loopback port to serve on.")] = 8765,
 ) -> None:
     """Open the review surface for pending drafts."""
-    review.serve(_root(), port)
+    root = _root()
+    try:
+        review.serve(root, port)
+    except (ReviewError, ContextError, SpecError, LedgerError, OSError) as e:
+        typer.secho(f"ERROR: {e}", fg=typer.colors.RED, err=True)
+        raise typer.Exit(1) from e
 
 
 @check_app.command("seam")
