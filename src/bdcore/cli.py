@@ -10,7 +10,7 @@ from typing import Annotated
 
 import typer
 
-from bdcore import cards, doctruth, engagers, graduation, ledger, seam
+from bdcore import cards, doctruth, engagers, graduation, ledger, review, seam
 from bdcore.context import ContextError, active_org, find_root
 from bdcore.ledger import LedgerError
 from bdcore.specs import SpecError
@@ -144,6 +144,14 @@ def graduation_status(
         typer.secho(f"{s.spec} {s.spec_version}: {s.verdict}", fg=colour)
         typer.echo(f"    runs {s.runs}/{graduation.WINDOW}  approval {approval}  edit {edits}  — {s.detail}")
     typer.echo("\nGraduation is reported, never applied. A human promotes the zone.")
+
+
+@app.command("review")
+def review_cmd(
+    port: Annotated[int, typer.Option("--port", help="Loopback port to serve on.")] = 8765,
+) -> None:
+    """Open the review surface for pending drafts."""
+    review.serve(_root(), port)
 
 
 @check_app.command("seam")
