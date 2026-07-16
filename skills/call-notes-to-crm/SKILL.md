@@ -1,6 +1,6 @@
 ---
 name: call-notes-to-crm
-description: Turns raw notes from a meeting or call that already happened into a flat, paste-ready CRM CallNote in the BDOwner's BD style. Trigger whenever the user says "summarise my call notes", "samenvatting van het gesprek", "CRM note", "maak er een CRM-notitie van", "log this meeting", "verwerk mijn aantekeningen", or pastes rough notes from a discovery/follow-up meeting and wants them structured. This is the POST-meeting counterpart to cold-call-prep (which preps a call BEFORE it happens) — if the call hasn't happened yet, use cold-call-prep instead. Also trigger after a discovery call when the user wants the account logged before drafting a follow-up.
+description: Turns raw notes from a meeting or call that already happened into a flat, paste-ready CRM CallNote in the BDOwner's BD style. Trigger whenever the user says "summarise my call notes", "CRM note", "log this meeting", the equivalent phrase in the org's own language, or pastes rough notes from a discovery/follow-up meeting and wants them structured. This is the POST-meeting counterpart to cold-call-prep (which preps a call BEFORE it happens) — if the call hasn't happened yet, use cold-call-prep instead. Also trigger after a discovery call when the user wants the account logged before drafting a follow-up.
 ---
 
 # Call Notes → CRM CallNote
@@ -11,7 +11,7 @@ You turn the BDOwner's rough notes from a meeting that already happened into a c
 
 **Never claim more than the notes support.** This is the single correction the BDOwner makes most often. Raw notes are fragmentary and you will be tempted to smooth them into confident prose — resist it.
 
-- When you merge two fragments into one sentence, you often invent specificity that neither fragment had. Don't. If note A says "support via India" and note B says "we do second-line for ClientCaseB", do **not** write "second-line for ClientCaseB via India" unless a note actually says that. Keep them as the two separate facts they are.
+- When you merge two fragments into one sentence, you often invent specificity that neither fragment had. Don't. If note A says "support via India" and note B says "we do second-line for [Account B]", do **not** write "second-line for [Account B] via India" unless a note actually says that. Keep them as the two separate facts they are.
 - Flag every figure you didn't get from the person directly as rough: "~150 employees (third-party, treat as rough)", "est. revenue ~$25M (rough)".
 - If something is your inference rather than something said, mark it ("Realistic read:", "Likely:") so the BDOwner can see the seam.
 - When the notes genuinely don't cover a section, write the gap ("Opportunity scope: unclear, qualify after next meeting") rather than padding it.
@@ -26,7 +26,7 @@ Read the notes once and pull:
 2. **Where this sits** — was it a first discovery, a follow-up, an event conversation? Warm or cold?
 3. **The entry point** — the specific reason there's a conversation at all (a felt pain, a trigger, a mutual connection, a case that resonated).
 4. **SPICED signal** — map what you heard onto Situation, Pain, Impact, Critical event, Decision criteria. Don't force empty dimensions; name the ones you have.
-5. **The ExampleOrg angle** — where ExampleOrg plausibly helps, in the BDOwner's framing, and explicitly where it does *not* (the honest boundary is part of the credibility — see tone of voice).
+5. **The org angle** — where the org plausibly helps, in the BDOwner's framing, and explicitly where it does *not* (the honest boundary is part of the credibility — see tone of voice).
 6. **Next steps & open questions** — concrete actions, owners, and what's still unknown.
 
 ## CallNote structure
@@ -34,7 +34,7 @@ Read the notes once and pull:
 Follow this order. Use plain-text section labels (no markdown headers, no bullets — the CRM strips them). See `references/callnote-template.md` for the full annotated template and a worked example.
 
 ```
-ACCOUNT: [Company] — [context tag, e.g. "GreenTech follow-up"]
+ACCOUNT: [Company] — [context tag, e.g. "second follow-up call"]
 
 Account overview (rough): [1 paragraph. Flag every third-party figure as rough.]
 
@@ -42,7 +42,7 @@ Entry point: [Why there's a conversation. The specific hook.]
 
 Read from the meeting: [Your honest assessment — warmth, fit, where it could go. Mark inferences.]
 
-Opportunity / ExampleOrg angle: [Where ExampleOrg helps and where it deliberately doesn't.]
+Opportunity / org angle: [Where the org helps and where it deliberately doesn't.]
 
 Next actions: [Numbered, concrete, with owner where known.]
 
@@ -55,7 +55,7 @@ Add a `Business model:` or `Competitive landscape:` line only when the notes con
 
 This skill is portable — it works from pasted notes alone. But when the BDOwner's BD project folder is connected, it gets sharper:
 
-- Read the `context.tone(channel)` surface so the "Read" and "ExampleOrg angle" sections sound like him — it's the single source for voice; don't restate its rules here. Resolve `context.*` surfaces per `core/path-conventions.md` against the org named in `ACTIVE_CONTEXT.md`. A missing surface file or one marked `STATUS: UNFILLED` is a blocking error — stop and tell the BDOwner; never guess.
+- Read the `context.tone(channel)` surface so the "Read" and "org angle" sections sound like him — it's the single source for voice; don't restate its rules here. Resolve `context.*` surfaces per `core/path-conventions.md` against the org named in `ACTIVE_CONTEXT.md`. A missing surface file or one marked `STATUS: UNFILLED` is a blocking error — stop and tell the BDOwner; never guess.
 - If an `AccountDossier` exists (per `core/path-conventions.md`), reconcile your overview against it rather than re-deriving — and note any contradiction.
 - Save the finished CallNote to the CallNote path per `core/path-conventions.md` so it's versioned and so `outreach-drafting` and future `discovery-call-prep` runs can consume it. The org slug comes from `ACTIVE_CONTEXT.md`.
 
@@ -72,7 +72,7 @@ Do not assume copy-paste when a connector is available, and do not hardcode a sp
 ## Output rules
 
 - Plain text only. No markdown, no headers, no bullets — the note goes into a CRM note field (pasted or written via connector).
-- Match the language of the notes (Dutch notes → Dutch note; English → English).
+- Match the language of the notes — write the CallNote in whatever language the notes came in.
 - Tight and scannable. A CallNote is a record, not an essay.
 - End with: the paste-ready note, then a short line offering the obvious next step (usually "Want me to draft the follow-up?" → hands off to `outreach-drafting`).
 

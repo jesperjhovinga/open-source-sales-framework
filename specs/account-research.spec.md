@@ -52,7 +52,7 @@ Explicit about evidence gaps: claims are sourced or flagged as inference.
 
 ## Acceptance criteria
 
-- Dossier includes sections: Company snapshot, Recent signals, Key people (with role + reasoning), ICP fit (scored against criteria), Proposition fit (EXAMPLE PROP A or EXAMPLE PROP B), Competitive context, Entry hypothesis, Risks and anti-signals.
+- Dossier includes sections: Company snapshot, Recent signals, Key people (with role + reasoning), ICP fit (scored against criteria), Proposition fit (per `context.positioning()`), Competitive context, Entry hypothesis, Risks and anti-signals.
 - Every non-obvious claim cites a source URL or internal doc path.
 - If public data is thin, the relevant section states "insufficient public information" instead of fabricating.
 - Dossier produced in under 10 minutes from trigger.

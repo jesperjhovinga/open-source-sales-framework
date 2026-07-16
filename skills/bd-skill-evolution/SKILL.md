@@ -18,7 +18,7 @@ Evaluate whether to enter the workflow when any of these happen during a convers
 1. **Correction of facts** — the BDOwner corrects something you asserted ("ProspectCo isn't a customer of that client", "it's correct-name not wrong-name"). A correction means the context or skill that guided you was wrong or missing.
 2. **Correction of voice** — he rewrites a draft to sound more like him, or trims it hard. The gap between your draft and his rewrite is a tone-of-voice learning.
 3. **Heavy rework before landing** — an outreach email, CallNote, or prep doc took several revision rounds, or you wrote then deleted whole sections. The final output is fine, but the path shows the skill didn't point you at the right pattern from the start. The fix is usually a worked example or a "prefer X over Y" note.
-4. **"For future reference" / "next time"** — the BDOwner states a rule explicitly ("design agencies under 15 people aren't a fit", "I always format subjects as `[functie] onderwerp`"). This is the highest-value, lowest-ambiguity trigger — capture it.
+4. **"For future reference" / "next time"** — the BDOwner states a rule explicitly ("design agencies under 15 people aren't a fit", "I always format subjects as `[role] [subject]`"). This is the highest-value, lowest-ambiguity trigger — capture it.
 5. **Wrong fit / scoring miss** — a prospect you scored pass/fail was re-judged by the BDOwner, revealing an ICP or disqualification rule that should be encoded.
 6. **Undocumented behavior or convention** — you discover a preference, a path convention, or a connector quirk not written down anywhere.
 

@@ -20,11 +20,11 @@ customer-service team" beats "interested in working together".]
 
 Read from the meeting: [Your honest assessment. How warm was the attitude? Is the
 fit real or only on paper? Where could it go? Mark inference explicitly:
-"Realistic read: likely to go cold without us driving it." If ExampleOrg fumbled
+"Realistic read: likely to go cold without us driving it." If the org fumbled
 something in the room, log it so it gets fixed before re-engaging.]
 
-Opportunity / ExampleOrg angle: [Where ExampleOrg plausibly helps — in the BDOwner's framing. AND
-the honest boundary: what ExampleOrg deliberately does not take on. The boundary is not a
+Opportunity / org angle: [Where the org plausibly helps — in the BDOwner's framing. AND
+the honest boundary: what the org deliberately does not take on. The boundary is not a
 weakness here; per the tone of voice it earns trust on the rest.]
 
 [Optional lines — include ONLY if the notes contain them:]
@@ -41,33 +41,34 @@ unproven, say so.]
 ## Worked example (English)
 
 ```
-ACCOUNT: a sector prospect — GreenTech follow-up
+ACCOUNT: a sector prospect — [Account] follow-up
 
-Account overview (rough): Smart LED grow-light + sensor company, founded 2006, HQ
-Gothenburg (SE), founded by plant scientists. ~25 employees across Europe/Asia/North
+Account overview (rough): [Product category] company, founded [year], HQ [city]
+([country]), founded by domain scientists. ~25 employees across Europe/Asia/North
 America (small org), est. revenue ~$25M (third-party, rough). Recently opened a
-second office in Breda (NL). Core stack: high-intensity adjustable LED lighting +
-HelioCORE light-control software + sensor tech (helioSENSE fluorescence sensor, full
-release 2026). Strong on sensor and light data; differentiation is data-driven light
-control.
+second office in [location]. Core stack: proprietary hardware + [control software]
++ sensor tech ([sensor product], full release 2026). Strong on sensor and data;
+differentiation is data-driven control.
 
-Ecosystem fit: Part of GreenControl, same as ExampleOrg and JII — warm network context,
-not cold.
+Ecosystem fit: Part of [network], same as the org and [partner] — warm network
+context, not cold.
 
-Read from the meeting: Open and promising. Genuinely strong on the data/sensor
+Read from the meeting: Open and promising. Genuinely strong on the underlying
 science, but light on software-product muscle.
 
 Entry point / opportunity: They need a robust digital product wrapped around their
-services — specifically around helioSENSE. Great data, but it needs productizing
-into something dependable and customer-facing. That's squarely an ExampleOrg build.
+services — specifically around [sensor product]. Great data, but it needs
+productizing into something dependable and customer-facing. That's squarely an
+org build.
 
 Key signal: IT team is small (<5, from our conversations). Likely can't build/scale
 a robust product in-house — strong candidate to land a real project, not just a
 conversation.
 
-Next actions: 1) Prep the digital-product narrative around helioSENSE for 22 June.
-2) Confirm logistics + who attends (esp. whoever owns IT/product). 3) Sketch a rough
-productization concept to react to. 4) Define discovery + scope questions.
+Next actions: 1) Prep the digital-product narrative around [sensor product] for
+22 June. 2) Confirm logistics + who attends (esp. whoever owns IT/product).
+3) Sketch a rough productization concept to react to. 4) Define discovery + scope
+questions.
 
 Open questions: Opportunity scope and timeline unproven — qualify at the meeting.
 Who internally owns the product roadmap?
@@ -75,4 +76,4 @@ Who internally owns the product roadmap?
 
 ## Note on the over-claim trap (real case)
 
-From a a sector prospect-adjacent session: notes said "second-line for ClientCaseB" and, separately, "first/second-line partly via a sister company in India." Merging these into "second-line for ClientCaseB via India" invented a link neither note supported. The correct CallNote keeps them as two facts. When in doubt, under-commit and ask the BDOwner.
+From a sector prospect-adjacent session: notes said "second-line for [Account B]" and, separately, "first/second-line partly via a sister company in India." Merging these into "second-line for [Account B] via India" invented a link neither note supported. The correct CallNote keeps them as two facts. When in doubt, under-commit and ask the BDOwner.

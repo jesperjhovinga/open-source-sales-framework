@@ -80,6 +80,6 @@ BDOwner reads and optionally edits. No "approve" action because nothing is sent 
 ## Open questions
 
 - Delivery channel — where does the BDOwner actually read the doc (Drive, Notion, email, chat)?
-- Auto-detection of proposition (EXAMPLE PROP A vs EXAMPLE PROP B) per call, or BDOwner-tagged?
+- Auto-detection of the proposition (per `context.positioning()`) per call, or BDOwner-tagged?
 - Calendar connector choice (Google Calendar, Outlook) — confirm before implementation.
 - If the Meeting has multiple purposes (e.g., discovery + workshop pitch), which template applies?

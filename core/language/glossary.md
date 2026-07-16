@@ -53,7 +53,7 @@ Things that happened. Past tense.
 - **DecisionMaker** — has authority to sign.
 - **InternalSME** — colleague who provides domain expertise.
 - **DeliveryTeam** — takes over at Onboarding handoff.
-- **WorkshopParticipant** — attends an ExampleOrg Workshop.
+- **WorkshopParticipant** — attends a Workshop run by the org.
 
 ## Stages (Winning by Design Bowtie)
 

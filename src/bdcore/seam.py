@@ -115,46 +115,7 @@ ALLOWLIST: dict[str, set[str]] = {
 # its offending line's fingerprint is listed. Fingerprints (not counts) mean a
 # swapped-in residue line fails even when the tally is unchanged. Regenerate with
 # `uv run python -m bdcore.seam` after extracting residue.
-BASELINE: dict[str, dict[str, list[str]]] = {
-    "core/context-contract.md": {"org-name": ["2d556eea8788"]},
-    "core/language/glossary.md": {"org-name": ["62c285514136"]},
-    "skills/account-research/SKILL.md": {
-        "geography": ["af1119226bc6", "4623fdf9bfbf"],
-        "language-token": ["7db484e1b02d"],
-        "org-name": ["ea99c2da0ca1", "efe2e0306421", "02f4c37c67ec", "17e493f92f69"],
-        "proposition": ["6e9724a08ba4", "02f4c37c67ec"],
-    },
-    "skills/bd-skill-card/assets/skill-card-template.md": {"named-language": ["3b95a674f8c0"]},
-    "skills/bd-skill-evolution/SKILL.md": {"language-token": ["aa0e60207de7"]},
-    "skills/bd-user-rules/SKILL.md": {
-        "language-token": ["ee7579d9ebd0", "84fefe8a8ae4"],
-        "org-name": ["ee7579d9ebd0"],
-        "proposition": ["a90dcc09e33a"],
-    },
-    "skills/call-notes-to-crm/SKILL.md": {
-        "account-name": ["4b954fb228e8", "b0da59ef0070"],
-        "language-token": ["6848a773cf83"],
-        "named-language": ["d101eb9085d3"],
-        "org-name": ["bb1c1da81bb1", "0e5a6b82c291", "ef06f5a345a7"],
-    },
-    "skills/call-notes-to-crm/references/callnote-template.md": {
-        "account-name": [
-            "1ab80d06f754",
-            "ab79936cb6d4",
-            "6a577d042300",
-            "b12192711752",
-            "854c92786843",
-            "8ba43d1f2aec",
-        ],
-        "geography": ["d72d9c91abe6"],
-        "org-name": ["fcf36b5c3be2", "1d1843b2d0bd", "fe4621c3575d", "6a577d042300", "e327fb982baa"],
-    },
-    "specs/account-research.spec.md": {"proposition": ["717d2691339e"]},
-    "specs/discovery-call-prep.spec.md": {"proposition": ["f4b05fc2b2e9"]},
-    "specs/prospect-sourcing.spec.md": {
-        "geography": ["e433fc32a7e1", "102a2af039d7", "60d6413a21db", "3c9ad9849044", "cec7029995ee"],
-    },
-}
+BASELINE: dict[str, dict[str, list[str]]] = {}
 
 
 def fingerprint(text: str) -> str:

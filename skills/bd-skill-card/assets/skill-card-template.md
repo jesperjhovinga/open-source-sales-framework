@@ -35,7 +35,7 @@
 {{The skill's hard rules — e.g. never fabricate claims, never auto-send, honour tov, flag rough figures.}}
 
 ## Limitations
-{{Honest limits — e.g. "no CRM connector bound yet, so output is paste-text"; "Dutch/English only". Delete any canned line that doesn't apply.}}
+{{Honest limits — e.g. "no CRM connector bound yet, so output is paste-text"; "single-language output only (per context.tone)". Delete any canned line that doesn't apply.}}
 
 ## Provenance
 - **Origin:** {{authored | adapted from <source> | bd-skill-evolution}}

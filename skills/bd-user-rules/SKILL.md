@@ -16,7 +16,7 @@ BD work goes wrong quietly when you guess the frame. Before substantial work, cl
 - **Which Account and Contact?** Name, role, seniority.
 - **Which channel?** Email, LinkedIn DM, WhatsApp, phone — each has a different register.
 - **Cold or warm?** Relationship history changes the whole approach (see `outreach-drafting`).
-- **Which proposition?** EXAMPLE PROP A vs. EXAMPLE PROP B, if it matters for the angle.
+- **Which proposition?** Per `context.positioning()`, if it matters for the angle.
 - **What outcome?** A booked meeting, a reply, a logged note, a research dossier.
 
 Skip asking only when the BDOwner already stated it or context makes it unambiguous. A brief question beats solving the wrong problem — but don't interrogate him over every small thing. One or two sharp questions, then work.
@@ -31,7 +31,7 @@ Before drafting outreach, a CallNote, or a dossier, know your source material:
 
 ## Never fabricate
 
-This is the fastest way to burn a relationship. No invented mutual connections, no made-up numbers, no claims ExampleOrg can't stand behind. If a draft needs a fact you don't have, leave a marked placeholder (`[datum]`, `[afzender]`, `[referentie]`) rather than inventing one. Flag third-party or rough figures as rough. When you're unsure whether a phrasing overstates, surface it to the BDOwner rather than committing silently.
+This is the fastest way to burn a relationship. No invented mutual connections, no made-up numbers, no claims the org can't stand behind. If a draft needs a fact you don't have, leave a marked placeholder (`[date]`, `[sender]`, `[reference]`) rather than inventing one. Flag third-party or rough figures as rough. When you're unsure whether a phrasing overstates, surface it to the BDOwner rather than committing silently.
 
 ## Draft → Approve — never auto-send or auto-write
 
@@ -48,7 +48,7 @@ Even if the BDOwner says "just send it," the safe default is to show the final a
 
 ## Follow his lead exactly
 
-- Use his exact phrasing, names, and conventions — including the subject format `[functie] onderwerp`.
+- Use his exact phrasing, names, and conventions — including any subject-line convention defined in `context.tone`.
 - Extend a draft he gives you; don't rewrite it from scratch.
 - Don't add claims, features, or sections he didn't ask for.
 - Honour his tone of voice — `context.tone(channel)` is the single source. Resolve `context.*` surfaces per `core/path-conventions.md` against the org named in `ACTIVE_CONTEXT.md`. A missing surface file or one marked `STATUS: UNFILLED` is a blocking error — stop and tell the BDOwner; never guess. Read it; don't restate its rules here. When in doubt: shorter, more honest, and closer to how he actually phrases things.
