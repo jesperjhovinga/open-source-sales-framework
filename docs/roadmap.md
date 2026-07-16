@@ -38,6 +38,20 @@ Remaining:
       `core/`, `specs/`, `skills/`, including the callnote-template.md worked
       example, which was rewritten in place with generic bracket placeholders
       rather than moved to `contexts/example-corp/`.
+- [ ] **Known limitation, not yet fixed**: `bd check seam` is a keyword scan for
+      denylisted org proper nouns (`RULES` in `src/bdcore/seam.py`), now run
+      over `core/`, `specs/`, `skills/`, and `src/bdcore/` itself. It cannot and
+      does not detect *structural* residue — prose that encodes one org's sales
+      motion (an ICP, a buyer shape, a channel mix) without using a denylisted
+      word. A live example: `skills/account-research/SKILL.md:90-96` hardcodes
+      an ICP table (`Specialist firm`, `15–150 people`, `Founder/CEO buyer`,
+      `Commercial revenue`) describing one specific consultancy, contradicting
+      the demo org's own `contexts/example-corp/icp.md` (50–500 technicians,
+      VP Operations) — `RULES` matches none of those strings, so the check
+      reports clean. `specs/prospect-sourcing.spec.md:47` has the same shape
+      (`Founder/MD/CEO is likely buyer` stated as prose next to the
+      `context.icp()` call meant to fetch it). Fixing those ICPs is a separate
+      change; this bullet only records that the checker cannot see them.
 
 ## C2 — One source of truth per workflow
 - [ ] Reconcile prospect-sourcing spec↔skill (dedup key, enrichment call, ICP

@@ -118,6 +118,16 @@ def test_graduation_status_not_applicable_for_a_higher_zone(repo):
     assert "Graduation is reported, never applied. A human promotes the zone." in result.output
 
 
+def test_check_seam_success_message_does_not_overclaim(repo):
+    for d in ("core", "skills", "src/bdcore"):
+        (repo / d).mkdir(parents=True, exist_ok=True)
+    result = runner.invoke(app, ["check", "seam"])
+    assert result.exit_code == 0
+    assert "No denylisted org nouns found" in result.output
+    assert "not proof of portability" in result.output
+    assert "BD Core stays portable" not in result.output
+
+
 @pytest.mark.skipif(os.geteuid() == 0, reason="root ignores file permissions; chmod 000 would not block reads")
 def test_log_approval_unreadable_ledger_fails_cleanly(repo):
     path = ledger_path(repo)

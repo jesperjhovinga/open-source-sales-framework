@@ -175,7 +175,10 @@ def check_seam() -> None:
         typer.secho(f"\n{len(new)} new seam violation(s). BD Core stays portable.", fg=typer.colors.RED)
         raise typer.Exit(1)
     typer.secho(
-        f"\nSeam clean — no new violations ({known} baselined, see docs/roadmap.md C1+C3).", fg=typer.colors.GREEN
+        f"\nNo denylisted org nouns found in {', '.join(seam.BD_CORE_DIRS)} ({known} baselined, see "
+        "docs/roadmap.md C1+C3). This is a keyword scan, not proof of portability — prose that encodes "
+        "one org's motion (an ICP, a buyer shape, a channel mix) passes unseen.",
+        fg=typer.colors.GREEN,
     )
 
 

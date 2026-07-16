@@ -1,9 +1,14 @@
 """Enforce "the seam is law" — BD Core carries no org-specific content.
 
-`core/`, `specs/` and `skills/` are portable. Company names, language defaults,
-geography rules, pitch prose and ICP criteria belong in `contexts/<org>/` and
-are reached through the contract (`core/context-contract.md`). This module
-greps BD Core for content that should have stayed behind the seam.
+`core/`, `specs/`, `skills/` and `src/bdcore/` are portable. Company names,
+language defaults, geography rules, pitch prose and ICP criteria belong in
+`contexts/<org>/` and are reached through the contract
+(`core/context-contract.md`). This module greps BD Core for content that
+should have stayed behind the seam.
+
+This is a keyword scan for denylisted org nouns, not a portability proof:
+prose that encodes one org's sales motion — an ICP, a buyer shape, a channel
+mix — passes unseen unless it happens to use a denylisted word.
 
 Every rule and every allowlist entry below is grounded in a violation that was
 present in the tree when it was written — none are speculative.
@@ -32,7 +37,7 @@ from typing import NamedTuple
 
 from bdcore.context import SURFACES
 
-BD_CORE_DIRS = ("core", "specs", "skills")
+BD_CORE_DIRS = ("core", "specs", "skills", "src/bdcore")
 
 
 class Rule(NamedTuple):
@@ -105,6 +110,20 @@ ALLOWLIST: dict[str, set[str]] = {
     "core/context-contract.md": {"raw-context-path"},
     # This skill's whole subject is the seam; it names the parts to describe them.
     "skills/improve-framework-architecture/": {"raw-context-path", "org-name"},
+    # This module defines the denylist, so its RULES patterns necessarily contain
+    # the literal banned tokens (Dutch words, NL/Benelux, Prop A/B, GreenTech...),
+    # and a comment illustrating the CONTRACT_CALL blanking rationale quotes the
+    # same example vocabulary ("Dutch", "ExampleOrg") the rules and tests use.
+    # raw-context-path and mangled-scrub aren't listed because their own patterns
+    # are written so they don't match themselves.
+    "src/bdcore/seam.py": {
+        "language-token",
+        "named-language",
+        "geography",
+        "proposition",
+        "account-name",
+        "org-name",
+    },
 }
 
 # Violations present when this check landed — extracted from the tree, not guessed.
