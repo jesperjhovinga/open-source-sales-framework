@@ -45,7 +45,9 @@ EXEMPT_DOCS = ("docs/roadmap.md",)
 # doc could then lie freely. Match the full relative path instead.
 EXEMPT_PATTERNS = (
     re.compile(r"^docs/audit-[^/]*\.md$"),
-    re.compile(r"^docs/superpowers/specs/[^/]*\.md$"),
+    # A design doc specifies what an implementation will add; a plan tells an
+    # engineer which files to create. Both name future paths by definition.
+    re.compile(r"^docs/superpowers/(specs|plans)/[^/]*\.md$"),
 )
 
 
