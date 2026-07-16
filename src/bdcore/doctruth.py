@@ -32,7 +32,9 @@ class Claim(NamedTuple):
         return f"{self.source}:{self.line}: claims `{self.path}` exists — it does not"
 
 
-EXCLUDED_DIRS = {".git", ".claude", ".venv", "node_modules"}
+# Tooling scratch, not repo docs: agent worktrees, virtualenvs, and the
+# .superpowers/ working directory (untracked briefs full of not-yet-real paths).
+EXCLUDED_DIRS = {".git", ".claude", ".venv", ".superpowers", "node_modules"}
 
 # Docs whose job is to name paths that do not exist: the roadmap plans them, a
 # design doc specifies what its implementation will add, an audit reports them

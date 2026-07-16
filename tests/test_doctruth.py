@@ -93,6 +93,14 @@ def test_is_normative(path, normative):
     assert is_normative(Path(path)) is normative
 
 
+def test_tooling_scratch_dirs_are_not_scanned(docs):
+    # .superpowers/ holds untracked agent briefs that name paths not yet created.
+    scratch = docs / ".superpowers" / "sdd"
+    scratch.mkdir(parents=True)
+    (scratch / "task-2-brief.md").write_text("Create `src/bdcore/ghost.py`.\n", encoding="utf-8")
+    assert check(docs) == []
+
+
 def test_nested_audit_doc_cannot_lie(docs):
     nested = docs / "skills" / "foo" / "docs"
     nested.mkdir(parents=True)
