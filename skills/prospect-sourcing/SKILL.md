@@ -34,9 +34,9 @@ For every `soft_pass` contact where a company name is visible in the `company_na
 **Scoring rules:**
 - `pass` — all ICP criteria confirmed
 - `soft_pass` — all but one confirmed, or a buyer-authority title without confirmed company size
-- `fail` — any hard disqualifier from `context.icp()` confirmed
+- `fail` — any hard disqualifier from `context.icp()` confirmed, or the account falls outside its geography/reachability criteria
 
-**Hard disqualifiers (immediate fail):** defined in `context.icp()` — any confirmed match is an immediate fail.
+**Hard disqualifiers (immediate fail):** defined in `context.icp()` — any confirmed match is an immediate fail. An account outside `context.icp()`'s geography/reachability criteria is also an immediate fail, even with no other disqualifier present — check this before Apollo enrichment (step 3) so out-of-scope contacts don't burn enrichment credits.
 
 Update the `icp_score` and `icp_notes` columns with your findings. Also fill in `company_size_est` where found.
 
