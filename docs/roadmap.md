@@ -19,6 +19,7 @@ Remaining:
       pitch prose in bd-email/cold-call-prep → `context.positioning`.
       Removed Dutch content lives in git history (pre-extraction: 0aafb9f);
       a real org context carries it locally, never in git.
+      (bd-email and event-invite are since retired — see C4.)
 - [ ] Secondary residue (found in the extraction audit, out of that scope):
       account-research dossier template (inline ICP table, Prop A/B pitch,
       offer-format names) → `context.icp`/`context.positioning`;
@@ -37,15 +38,18 @@ Remaining:
       → needs core/methodology first, see C6).
 
 ## C5 — Quarantine the generic island
-- [ ] Move marketing-psychology, revops, sales-enablement, email-sequence,
-      cold-email to `skills/library/` (optional, no framework integration) or cut.
+- [ ] Move marketing-psychology, revops, sales-enablement to `skills/library/`
+      (optional, no framework integration) or cut. (email-sequence and
+      cold-email are already retired — see C4.)
 - [ ] Merge grill-me into grill-with-docs as no-docs mode.
 - [ ] Fix grill-with-docs doc conventions (CONTEXT.md/adr → glossary.md/decisions.md).
 
-## C4 — One deep outreach skill
-- [ ] Design single `outreach` skill implementing outreach-drafting.spec with
-      warmth/purpose as inputs (cold / warm / re-engage / event). Contract-native
-      from birth. Retire the four colliding trigger surfaces.
+## C4 — One deep outreach skill  ✅ shipped
+- [x] Design single `outreach-drafting` skill implementing outreach-drafting.spec
+      with purpose as an input (cold / warm / re-engage / event). Contract-native
+      from birth, logs its own approval outcome. Retired the four colliding
+      trigger surfaces (bd-email, cold-email, email-sequence, event-invite) —
+      content stays in git history.
 
 ## C6 — Packaging & truth
 - [ ] `.claude-plugin/plugin.json` (Decision 8).

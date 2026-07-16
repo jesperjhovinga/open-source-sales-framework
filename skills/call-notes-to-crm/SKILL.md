@@ -57,7 +57,7 @@ This skill is portable — it works from pasted notes alone. But when the BDOwne
 
 - Read the `context.tone(channel)` surface so the "Read" and "ExampleOrg angle" sections sound like him — it's the single source for voice; don't restate its rules here. Resolve `context.*` surfaces per `core/path-conventions.md` against the org named in `ACTIVE_CONTEXT.md`. A missing surface file or one marked `STATUS: UNFILLED` is a blocking error — stop and tell the BDOwner; never guess.
 - If an `AccountDossier` exists (per `core/path-conventions.md`), reconcile your overview against it rather than re-deriving — and note any contradiction.
-- Save the finished CallNote to the CallNote path per `core/path-conventions.md` so it's versioned and so `bd-email` and future `discovery-call-prep` runs can consume it. The org slug comes from `ACTIVE_CONTEXT.md`.
+- Save the finished CallNote to the CallNote path per `core/path-conventions.md` so it's versioned and so `outreach-drafting` and future `discovery-call-prep` runs can consume it. The org slug comes from `ACTIVE_CONTEXT.md`.
 
 ## Delivery — port to a CRM, don't assume copy-paste
 
@@ -74,10 +74,10 @@ Do not assume copy-paste when a connector is available, and do not hardcode a sp
 - Plain text only. No markdown, no headers, no bullets — the note goes into a CRM note field (pasted or written via connector).
 - Match the language of the notes (Dutch notes → Dutch note; English → English).
 - Tight and scannable. A CallNote is a record, not an essay.
-- End with: the paste-ready note, then a short line offering the obvious next step (usually "Want me to draft the follow-up?" → hands off to `bd-email`).
+- End with: the paste-ready note, then a short line offering the obvious next step (usually "Want me to draft the follow-up?" → hands off to `outreach-drafting`).
 
 ## Composes with
 
 - **account-research** — if there's no dossier yet and the account looks real, offer to build one.
-- **bd-email** — the natural next step; the CallNote is its richest input for a follow-up.
+- **outreach-drafting** — the natural next step; the CallNote is its richest input for a follow-up.
 - **discovery-call-prep** — a prior CallNote sharpens prep for the next meeting on the same account.

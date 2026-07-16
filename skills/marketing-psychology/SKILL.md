@@ -113,6 +113,5 @@ When helping users:
 
 ## Related Skills
 
-- **cold-email**: Apply psychology to outreach copy
+- **outreach-drafting**: Apply psychology to outreach copy
 - **sales-enablement**: Apply psychology to pitch decks and collateral
-- **email-sequence**: Apply psychology to nurture flows

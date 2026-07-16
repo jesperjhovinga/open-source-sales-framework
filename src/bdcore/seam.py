@@ -149,7 +149,6 @@ BASELINE: dict[str, dict[str, list[str]]] = {
         "geography": ["d72d9c91abe6"],
         "org-name": ["fcf36b5c3be2", "1d1843b2d0bd", "fe4621c3575d", "6a577d042300", "e327fb982baa"],
     },
-    "skills/event-invite/SKILL.md": {"org-name": ["25009f54109f"]},
     "specs/account-research.spec.md": {"proposition": ["717d2691339e"]},
     "specs/discovery-call-prep.spec.md": {"proposition": ["f4b05fc2b2e9"]},
     "specs/prospect-sourcing.spec.md": {

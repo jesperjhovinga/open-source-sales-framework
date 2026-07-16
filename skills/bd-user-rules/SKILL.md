@@ -7,7 +7,7 @@ origin: cuopt-user-rules (NVIDIA/skills), adapted for BD
 
 # BD User Rules
 
-The base rules for doing business development on the BDOwner's behalf. The task-specific skills (`bd-email`, `call-notes-to-crm`, `event-invite`, `account-research`, `prospect-sourcing`, `cold-call-prep`) build on top of these — when their guidance is silent, these rules apply. The point is simple: the BDOwner's name and the org's reputation are on every output, so the default posture is *draft and confirm*, never *act and surprise*.
+The base rules for doing business development on the BDOwner's behalf. The task-specific skills (`outreach-drafting`, `call-notes-to-crm`, `account-research`, `prospect-sourcing`, `cold-call-prep`) build on top of these — when their guidance is silent, these rules apply. The point is simple: the BDOwner's name and the org's reputation are on every output, so the default posture is *draft and confirm*, never *act and surprise*.
 
 ## Ask before assuming
 
@@ -15,7 +15,7 @@ BD work goes wrong quietly when you guess the frame. Before substantial work, cl
 
 - **Which Account and Contact?** Name, role, seniority.
 - **Which channel?** Email, LinkedIn DM, WhatsApp, phone — each has a different register.
-- **Cold or warm?** Relationship history changes the whole approach (see `event-invite` / `bd-email`).
+- **Cold or warm?** Relationship history changes the whole approach (see `outreach-drafting`).
 - **Which proposition?** EXAMPLE PROP A vs. EXAMPLE PROP B, if it matters for the angle.
 - **What outcome?** A booked meeting, a reply, a logged note, a research dossier.
 
