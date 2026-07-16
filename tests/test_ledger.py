@@ -28,11 +28,14 @@ def repo(tmp_path):
 @pytest.mark.parametrize(
     ("before", "after", "expected"),
     [
-        ("one two three four", "one two three four", 0.0),      # untouched
-        ("one two three four", "one two three FIVE", 0.25),     # one word of four
-        ("one two", "", 1.0),                                   # deleted entirely
-        ("", "", 0.0),                                          # both empty
-        ("one two", "totally different words here", 1.0),       # full rewrite, capped at 1.0
+        ("one two three four", "one two three four", 0.0),  # untouched
+        ("one two three four", "one two three FIVE", 0.25),  # one word of four
+        ("one two", "", 1.0),  # deleted entirely
+        ("", "", 0.0),  # both empty
+        ("one two", "totally different words here", 1.0),  # full rewrite, capped at 1.0
+        ("a b c d", "a b", 0.5),  # deletion
+        ("one two three", "one two three four five six seven", 4 / 7),  # 4 inserted of 7
+        ("one two three four five", "one two THREE-POINT-FIVE three four five", 1 / 6),  # 1 inserted of 6
     ],
 )
 def test_word_edit_rate(before, after, expected):
@@ -61,6 +64,21 @@ def test_record_computes_edit_rate_from_before_and_after(repo):
 def test_record_rejects_both_edit_rate_and_texts(repo):
     with pytest.raises(LedgerError, match="both"):
         record("r1", "outreach-drafting", APPROVED, repo, before="a", after="b", edit_rate=0.5)
+
+
+def test_record_rejects_before_alone(repo):
+    with pytest.raises(LedgerError, match="only one of"):
+        record("r1", "outreach-drafting", APPROVED, repo, before="some draft text")
+
+
+def test_record_rejects_after_alone(repo):
+    with pytest.raises(LedgerError, match="only one of"):
+        record("r1", "outreach-drafting", APPROVED, repo, after="some draft text")
+
+
+def test_record_rejects_before_alone_with_edit_rate(repo):
+    with pytest.raises(LedgerError, match="only one of"):
+        record("r1", "outreach-drafting", APPROVED, repo, before="some draft text", edit_rate=0.5)
 
 
 def test_record_requires_a_reason_for_a_reject(repo):

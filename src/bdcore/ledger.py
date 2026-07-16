@@ -44,11 +44,16 @@ def word_edit_rate(before: str, after: str) -> float:
     original's length: rewriting every word is 1.0 however long the result.
     """
     old, new = before.split(), after.split()
-    if not old:
-        return 0.0 if not new else 1.0
+    if not old and not new:
+        return 0.0
     matcher = difflib.SequenceMatcher(a=old, b=new, autojunk=False)
     unchanged = sum(block.size for block in matcher.get_matching_blocks())
-    return min(1.0, (len(old) - unchanged) / len(old))
+    # Count whichever side changed more: words that vanished from the draft, or
+    # words injected into it. Taking the max (not the sum) keeps a replacement as
+    # one change rather than two, and normalising by the longer text keeps a large
+    # insertion from exceeding 1.0.
+    changed = max(len(old) - unchanged, len(new) - unchanged)
+    return changed / max(len(old), len(new))
 
 
 def ledger_path(root: Path | None = None) -> Path:
@@ -75,6 +80,9 @@ def record(
     """
     if outcome not in OUTCOMES:
         raise LedgerError(f"unknown outcome {outcome!r} — expected one of {', '.join(OUTCOMES)}")
+
+    if (before is not None) != (after is not None):
+        raise LedgerError("only one of --before/--after was given — both texts are needed to compute a rate")
 
     texts_given = before is not None and after is not None
     if texts_given and edit_rate is not None:
