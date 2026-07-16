@@ -41,6 +41,18 @@ def test_active_org_rejects_empty_file(repo):
         active_org(repo)
 
 
+def test_active_org_skips_a_multiline_html_comment(repo):
+    (repo / "ACTIVE_CONTEXT.md").write_text("<!--\npick an org below\n-->\nacme\n", encoding="utf-8")
+    assert active_org(repo) == "acme"
+
+
+def test_active_org_rejects_a_non_slug_line(repo):
+    # A stray prose line (spaces, punctuation) is not a slug — fail clearly, don't guess an org.
+    (repo / "ACTIVE_CONTEXT.md").write_text("set me to your org\n", encoding="utf-8")
+    with pytest.raises(ContextError, match="not a valid slug"):
+        active_org(repo)
+
+
 def test_active_org_rejects_slug_without_a_context_dir(repo):
     (repo / "ACTIVE_CONTEXT.md").write_text("ghost\n", encoding="utf-8")
     with pytest.raises(ContextError, match="contexts/ghost/ does not exist"):

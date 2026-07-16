@@ -53,6 +53,12 @@ def test_unbackticked_prose_is_not_a_claim():
     assert claims_in("we should add core/methodology/ someday") == []
 
 
+def test_link_fragment_is_stripped_before_checking(docs):
+    # `core/glossary.md#terms` points at a real file; the #anchor must not make it "missing".
+    (docs / "README.md").write_text("See `core/glossary.md#terms`.\n", encoding="utf-8")
+    assert check(docs) == []
+
+
 def test_roadmap_may_name_paths_it_plans_to_create(docs):
     (docs / "docs" / "roadmap.md").write_text("- [ ] Add `core/methodology/` summaries.\n", encoding="utf-8")
     assert check(docs) == []

@@ -90,27 +90,52 @@ def test_placeholder_and_template_paths_are_not_raw_paths(core, placeholder):
     assert seam.check(core) == []
 
 
-def test_violations_within_budget_are_reported_but_not_build_failing(core, monkeypatch):
-    monkeypatch.setattr(seam, "BASELINE", {"core/glossary.md": {"org-name": 2}})
-    (core / "core" / "glossary.md").write_text("ExampleOrg here\nExampleOrg again\n", encoding="utf-8")
+def _baseline(text: str, rule: str = "org-name") -> dict:
+    return {"core/glossary.md": {rule: [seam.fingerprint(text)]}}
+
+
+def test_grandfathered_lines_are_reported_but_not_build_failing(core, monkeypatch):
+    monkeypatch.setattr(
+        seam,
+        "BASELINE",
+        {"core/glossary.md": {"org-name": [seam.fingerprint("ExampleOrg one"), seam.fingerprint("ExampleOrg two")]}},
+    )
+    (core / "core" / "glossary.md").write_text("ExampleOrg one\nExampleOrg two\n", encoding="utf-8")
 
     assert len(seam.check(core)) == 2
     assert all(v.known for v in seam.check(core))
     assert seam.new_violations(core) == []
 
 
-def test_one_more_than_the_budget_fails(core, monkeypatch):
-    # The F2 ratchet: baseline allows 1 org-name, the file now has 2. The extra one fails.
-    monkeypatch.setattr(seam, "BASELINE", {"core/glossary.md": {"org-name": 1}})
-    (core / "core" / "glossary.md").write_text("ExampleOrg here\nExampleOrg again\n", encoding="utf-8")
+def test_one_more_than_the_baseline_fails(core, monkeypatch):
+    monkeypatch.setattr(seam, "BASELINE", _baseline("ExampleOrg here"))
+    (core / "core" / "glossary.md").write_text("ExampleOrg here\nExampleOrg also here\n", encoding="utf-8")
 
     new = seam.new_violations(core)
     assert [v.rule.name for v in new] == ["org-name"]
-    assert new[0].line == 2  # the first is within budget, the second overflows
+    assert new[0].line == 2  # the grandfathered line is known; the new one fails
+
+
+def test_swapping_a_baselined_line_for_a_different_one_fails(core, monkeypatch):
+    # The reviewer's finding: a count would mask this (still one org-name). The
+    # fingerprint doesn't — the grandfathered line is gone, a new one took its place.
+    monkeypatch.setattr(seam, "BASELINE", _baseline("ExampleOrg was here"))
+    (core / "core" / "glossary.md").write_text("A different ExampleOrg line entirely\n", encoding="utf-8")
+
+    new = seam.new_violations(core)
+    assert [v.rule.name for v in new] == ["org-name"]
+    assert new[0].line == 1
+
+
+def test_editing_a_baselined_line_re_flags_it(core, monkeypatch):
+    monkeypatch.setattr(seam, "BASELINE", _baseline("ExampleOrg builds widgets"))
+    (core / "core" / "glossary.md").write_text("ExampleOrg builds gadgets\n", encoding="utf-8")
+
+    assert len(seam.new_violations(core)) == 1  # fingerprint changed → no longer grandfathered
 
 
 def test_a_new_rule_in_a_baselined_file_still_fails(core, monkeypatch):
-    monkeypatch.setattr(seam, "BASELINE", {"core/glossary.md": {"org-name": 1}})
+    monkeypatch.setattr(seam, "BASELINE", _baseline("ExampleOrg"))
     (core / "core" / "glossary.md").write_text("ExampleOrg\nDefault to Dutch.\n", encoding="utf-8")
 
     assert [v.rule.name for v in seam.new_violations(core)] == ["named-language"]

@@ -11,13 +11,26 @@ present in the tree when it was written — none are speculative.
 The BASELINE records violations that already existed when this check was added.
 They are reported but do not fail the build, so the check can land without
 blocking on the domain decisions in docs/roadmap.md C1+C3. Anything *not*
-baselined fails. Delete entries as files get cleaned; the ratchet only tightens.
+baselined fails.
+
+Each baselined violation is grandfathered by a fingerprint of its offending
+line, not by a count — so swapping one residue line for a different one in the
+same file fails the build (a count would mask it). Editing a baselined line
+changes its fingerprint and re-flags it: touching residue means dealing with
+it. Regenerate the fingerprints after extracting residue with:
+
+    uv run python -m bdcore.seam
+
+Delete entries as files get cleaned; the ratchet only tightens.
 """
 
+import hashlib
 import re
-from collections import defaultdict
+from collections import Counter
 from pathlib import Path
 from typing import NamedTuple
+
+from bdcore.context import SURFACES
 
 BD_CORE_DIRS = ("core", "specs", "skills")
 
@@ -78,7 +91,9 @@ RULES = [
 # its quoted channel/proposition arguments can't be mistaken for residue — but
 # residue elsewhere on the same line is still caught. (Skipping the whole line
 # instead would let `... context.tone(...); default to Dutch for ExampleOrg` pass.)
-CONTRACT_CALL = re.compile(r"context\.(positioning|icp|tone|content|competitors|connector|pricing)\([^)]*\)")
+# Surface names come from the contract itself so the two never drift apart.
+_SURFACE_NAMES = "|".join(re.escape(name.replace("-", "_")) for name in SURFACES)
+CONTRACT_CALL = re.compile(rf"context\.({_SURFACE_NAMES})\([^)]*\)")
 
 # Exact file path, or a directory prefix ending in "/", -> rules it may match.
 # A directory prefix exempts EVERY line under it from the listed rules, including
@@ -96,24 +111,57 @@ ALLOWLIST: dict[str, set[str]] = {
 # Reported, but not build-failing: clearing them needs the org-content decisions
 # tracked in docs/roadmap.md C1+C3, which are the BDOwner's to make.
 #
-# Keyed file -> rule -> COUNT, not a bare set: the count is the ratchet. Adding
-# one more instance of an already-baselined rule to an already-baselined file
-# pushes the count over budget and fails the build. Extract residue and lower the
-# number (delete the entry at 0). It only ever tightens.
-BASELINE: dict[str, dict[str, int]] = {
-    "core/context-contract.md": {"org-name": 1},
-    "core/language/glossary.md": {"org-name": 1},
-    "skills/account-research/SKILL.md": {"geography": 2, "language-token": 1, "org-name": 4, "proposition": 2},
-    "skills/bd-skill-card/assets/skill-card-template.md": {"named-language": 1},
-    "skills/bd-skill-evolution/SKILL.md": {"language-token": 1},
-    "skills/bd-user-rules/SKILL.md": {"language-token": 2, "org-name": 1, "proposition": 1},
-    "skills/call-notes-to-crm/SKILL.md": {"account-name": 2, "language-token": 1, "named-language": 1, "org-name": 3},
-    "skills/call-notes-to-crm/references/callnote-template.md": {"account-name": 6, "geography": 1, "org-name": 5},
-    "skills/event-invite/SKILL.md": {"org-name": 1},
-    "specs/account-research.spec.md": {"proposition": 1},
-    "specs/discovery-call-prep.spec.md": {"proposition": 1},
-    "specs/prospect-sourcing.spec.md": {"geography": 5},
+# Keyed file -> rule -> [line fingerprints]. A violation is grandfathered only if
+# its offending line's fingerprint is listed. Fingerprints (not counts) mean a
+# swapped-in residue line fails even when the tally is unchanged. Regenerate with
+# `uv run python -m bdcore.seam` after extracting residue.
+BASELINE: dict[str, dict[str, list[str]]] = {
+    "core/context-contract.md": {"org-name": ["2d556eea8788"]},
+    "core/language/glossary.md": {"org-name": ["62c285514136"]},
+    "skills/account-research/SKILL.md": {
+        "geography": ["af1119226bc6", "4623fdf9bfbf"],
+        "language-token": ["7db484e1b02d"],
+        "org-name": ["ea99c2da0ca1", "efe2e0306421", "02f4c37c67ec", "17e493f92f69"],
+        "proposition": ["6e9724a08ba4", "02f4c37c67ec"],
+    },
+    "skills/bd-skill-card/assets/skill-card-template.md": {"named-language": ["3b95a674f8c0"]},
+    "skills/bd-skill-evolution/SKILL.md": {"language-token": ["aa0e60207de7"]},
+    "skills/bd-user-rules/SKILL.md": {
+        "language-token": ["ee7579d9ebd0", "84fefe8a8ae4"],
+        "org-name": ["ee7579d9ebd0"],
+        "proposition": ["a90dcc09e33a"],
+    },
+    "skills/call-notes-to-crm/SKILL.md": {
+        "account-name": ["4b954fb228e8", "b0da59ef0070"],
+        "language-token": ["6848a773cf83"],
+        "named-language": ["d101eb9085d3"],
+        "org-name": ["bb1c1da81bb1", "0e5a6b82c291", "ef06f5a345a7"],
+    },
+    "skills/call-notes-to-crm/references/callnote-template.md": {
+        "account-name": [
+            "1ab80d06f754",
+            "ab79936cb6d4",
+            "6a577d042300",
+            "b12192711752",
+            "854c92786843",
+            "8ba43d1f2aec",
+        ],
+        "geography": ["d72d9c91abe6"],
+        "org-name": ["fcf36b5c3be2", "1d1843b2d0bd", "fe4621c3575d", "6a577d042300", "e327fb982baa"],
+    },
+    "skills/event-invite/SKILL.md": {"org-name": ["25009f54109f"]},
+    "specs/account-research.spec.md": {"proposition": ["717d2691339e"]},
+    "specs/discovery-call-prep.spec.md": {"proposition": ["f4b05fc2b2e9"]},
+    "specs/prospect-sourcing.spec.md": {
+        "geography": ["e433fc32a7e1", "102a2af039d7", "60d6413a21db", "3c9ad9849044", "cec7029995ee"],
+    },
 }
+
+
+def fingerprint(text: str) -> str:
+    """Stable short fingerprint of an offending line, whitespace-normalized."""
+    normalized = " ".join(text.split())
+    return hashlib.sha1(normalized.encode("utf-8")).hexdigest()[:12]
 
 
 class Violation(NamedTuple):
@@ -121,7 +169,11 @@ class Violation(NamedTuple):
     line: int
     rule: Rule
     text: str
-    known: bool = False  # set by check(): within the file+rule's baselined budget
+    known: bool = False  # set by check(): line fingerprint is in the baseline
+
+    @property
+    def fingerprint(self) -> str:
+        return fingerprint(self.text)
 
     def __str__(self) -> str:
         marker = "known" if self.known else "SEAM"
@@ -169,21 +221,44 @@ def _scan(root: Path) -> list[Violation]:
 
 
 def check(root: Path) -> list[Violation]:
-    """Every seam violation, each marked `known` if it fits its file+rule budget.
+    """Every seam violation, each marked `known` if its line is grandfathered.
 
-    The first N matches of a rule in a file (in line order) are within the
-    baselined budget N and marked known; the N+1th onward are new.
+    A violation is known when its line fingerprint appears in the baseline for
+    its (file, rule). Exact-duplicate residue lines are matched as a multiset, so
+    two identical baselined lines grandfather exactly two occurrences, no more.
     """
-    seen: dict[tuple[str, str], int] = defaultdict(int)
+    remaining = {(f, r): Counter(fps) for f, rules in BASELINE.items() for r, fps in rules.items()}
     result: list[Violation] = []
     for v in _scan(root):
-        key = (v.path, v.rule.name)
-        seen[key] += 1
-        budget = BASELINE.get(v.path, {}).get(v.rule.name, 0)
-        result.append(v._replace(known=seen[key] <= budget))
+        budget = remaining.get((v.path, v.rule.name))
+        known = bool(budget and budget[v.fingerprint] > 0)
+        if known:
+            budget[v.fingerprint] -= 1
+        result.append(v._replace(known=known))
     return result
 
 
 def new_violations(root: Path) -> list[Violation]:
-    """Violations over their baselined budget — these fail the build."""
+    """Violations whose line is not grandfathered — these fail the build."""
     return [v for v in check(root) if not v.known]
+
+
+def _render_baseline(root: Path) -> str:
+    """Render the current tree's violations as a BASELINE literal, for regeneration."""
+    grouped: dict[str, dict[str, list[str]]] = {}
+    for v in _scan(root):
+        if allowed(v.path, v.rule.name):
+            continue
+        grouped.setdefault(v.path, {}).setdefault(v.rule.name, []).append(v.fingerprint)
+    lines = ["BASELINE: dict[str, dict[str, list[str]]] = {"]
+    for path in sorted(grouped):
+        rules = ", ".join(f'"{r}": {grouped[path][r]}' for r in sorted(grouped[path]))
+        lines.append(f'    "{path}": {{{rules}}},')
+    lines.append("}")
+    return "\n".join(lines)
+
+
+if __name__ == "__main__":
+    # Reprints BASELINE from the current tree so it can be pasted back after
+    # residue is extracted. Run from the repo root: `uv run python -m bdcore.seam`.
+    print(_render_baseline(Path.cwd()))

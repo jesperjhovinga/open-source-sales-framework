@@ -4,6 +4,7 @@ Library code raises ContextError; this layer is the only place that turns a
 failure into a message and an exit code.
 """
 
+import json
 from pathlib import Path
 from typing import Annotated
 
@@ -52,9 +53,12 @@ def source(
 ) -> None:
     """Turn an Apify engagement export into a pre-filtered prospect CSV."""
     root = _root()
+    if not input_json.is_file():
+        typer.secho(f"ERROR: no input file at {input_json}", fg=typer.colors.RED, err=True)
+        raise typer.Exit(1)
     try:
         rows = engagers.run(input_json, output_csv, seed_url, root)
-    except ContextError as e:
+    except (ContextError, json.JSONDecodeError) as e:
         typer.secho(f"ERROR: {e}", fg=typer.colors.RED, err=True)
         raise typer.Exit(1) from e
 

@@ -15,6 +15,7 @@ import re
 from pathlib import Path
 
 UNFILLED_MARKER = "STATUS: UNFILLED"
+SLUG_RE = re.compile(r"[a-z0-9][a-z0-9-]*")
 
 # Contract surface name -> filename, per the table in core/path-conventions.md.
 SURFACES = {
@@ -51,14 +52,24 @@ def active_org(root: Path | None = None) -> str:
         raise ContextError(f"{path} does not exist — cannot resolve the active org")
 
     slug = ""
+    in_comment = False
     for line in path.read_text(encoding="utf-8").splitlines():
         stripped = line.strip()
-        if stripped and not stripped.startswith(("#", "<!--")):
-            slug = stripped
-            break
+        if in_comment:
+            in_comment = "-->" not in stripped
+            continue
+        if not stripped or stripped.startswith("#"):
+            continue
+        if stripped.startswith("<!--"):
+            in_comment = "-->" not in stripped  # stays open across lines until closed
+            continue
+        slug = stripped
+        break
 
     if not slug:
         raise ContextError(f"{path} has no non-comment slug line — cannot resolve the active org")
+    if not SLUG_RE.fullmatch(slug):
+        raise ContextError(f"{path} slug line {slug!r} is not a valid slug (expected {SLUG_RE.pattern})")
     if slug == "_template":
         raise ContextError(f"{path} names '_template' as the active org — set it to a real org slug")
     if not (root / "contexts" / slug).is_dir():
@@ -90,8 +101,9 @@ def config_block(name: str, key: str, root: Path | None = None) -> dict:
     """Extract a machine-readable config block from a surface.
 
     Surfaces may carry fenced ```json blocks for scripts to consume — see the
-    `context.icp` entry in core/context-contract.md. Returns the value at `key`
-    from the first block that defines it.
+    `context.icp` entry in core/context-contract.md. Returns the object at `key`
+    from the first block that defines it; callers still validate its fields (see
+    engagers.load_prefilter). Only used for object-valued keys today.
     """
     content = read_surface(name, root)
     path = surface_path(name, root)

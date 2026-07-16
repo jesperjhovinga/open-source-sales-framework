@@ -113,8 +113,12 @@ def dedupe_actors(records: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
     for r in records:
         if r.get("type") not in ("reaction", "comment"):
             continue
-        actor = r["actor"]
-        aid = actor["id"]
+        actor = r.get("actor")
+        if not isinstance(actor, dict):
+            continue  # malformed record — no actor object
+        aid = actor.get("id")
+        if not aid:
+            continue  # actor without an id — nothing to dedupe on
         entry = actors.setdefault(
             aid,
             {
@@ -145,7 +149,8 @@ def process(records: list[dict[str, Any]], prefilter: Prefilter, seed_url: str =
         score, notes = score_headline(position, prefilter)
         title, company = split_position(position)
         first, last = split_name(actor["name"])
-        engagement = "comment" if actor["has_comment"] else next(iter(actor["engagement_types"]), "reaction")
+        # sorted() so a reaction-only actor's type is stable across runs (sets are hash-ordered)
+        engagement = "comment" if actor["has_comment"] else next(iter(sorted(actor["engagement_types"])), "reaction")
 
         rows.append(
             {
@@ -161,7 +166,7 @@ def process(records: list[dict[str, Any]], prefilter: Prefilter, seed_url: str =
                 "icp_score": score,
                 "icp_notes": notes,
                 "engagement_type": engagement,
-                "posts_engaged": " | ".join(p for p in actor["posts_engaged"] if p),
+                "posts_engaged": " | ".join(sorted(p for p in actor["posts_engaged"] if p)),
                 "source_profile": seed_url,
                 "sourced_date": today,
             }

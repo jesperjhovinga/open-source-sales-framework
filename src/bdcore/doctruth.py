@@ -71,8 +71,9 @@ def claims_in(text: str) -> list[tuple[int, str]]:
     for lineno, line in enumerate(text.splitlines(), start=1):
         for match in PATH_PATTERN.finditer(line):
             claimed = f"{match.group(1)}/{match.group(2)}"
-            if PLACEHOLDER_PATTERN.search(claimed):
-                continue  # template path — nothing concrete to verify
+            claimed = claimed.split("#", 1)[0].split("?", 1)[0]  # drop link fragment/query
+            if not claimed or PLACEHOLDER_PATTERN.search(claimed):
+                continue  # template path or bare fragment — nothing concrete to verify
             found.append((lineno, claimed))
     return found
 
