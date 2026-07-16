@@ -54,7 +54,10 @@ Remaining:
       Decision 1's graduation rule has data to read.
 
 ## C6 — Packaging & truth
-- [ ] `.claude-plugin/plugin.json` (Decision 8).
+- [x] `.claude-plugin/plugin.json` (Decision 8). Turned out `plugin.json` alone
+      doesn't make the repo installable from GitHub — `.claude-plugin/marketplace.json`
+      is also required (one entry, `source: "./"`). Both now ship; see Decision 8's
+      v0.2 amendment. `claude plugin validate . --strict` passes.
 - [ ] `tests/<spec>.cases.md` per implemented spec (Decision 4).
 - [ ] `core/methodology/` SPICED + Bowtie summaries (unblocks discovery-call-prep).
 - [ ] Decide `core/archetypes/`: build it, or accept that the glossary's archetype

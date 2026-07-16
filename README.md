@@ -31,6 +31,15 @@ BD is pattern-heavy. Research accounts, write outreach, prep calls, summarize co
 
 ## Getting started
 
+Install as a Claude Code plugin:
+
+```
+/plugin marketplace add jesperjhovinga/open-source-sales-framework
+/plugin install open-source-sales-framework@open-source-sales-framework
+```
+
+Skills then invoke as `/open-source-sales-framework:<skill-name>`.
+
 1. Try it as-is: `ACTIVE_CONTEXT.md` points at `example-corp`, a fictional demo org — run the account-research skill against any public company to see the flow.
 2. Make it yours: copy `contexts/_template/` to `contexts/<your-org>/`, fill every surface (positioning, ICP, tone of voice, competitors, content, pricing, connectors), set `ACTIVE_CONTEXT.md` to your slug.
 3. Start with three workflows: account research (Autonomous), outreach drafting and call prep (Draft→Approve).

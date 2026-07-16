@@ -118,7 +118,7 @@ metric. The auto-graduation rule is computed and **reported** by
 **Why**: Lowest friction. Native to the BDOwner's environment. Trivially version-controlled (already in Git). Same plugin loads in any Org Context — only `contexts/<org>/` swaps. AI-first by definition: the runtime *is* Claude.
 
 **Plugin shape**:
-- `.claude-plugin/plugin.json` at repo root.
+- `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json` at repo root.
 - `skills/<spec-id>/SKILL.md` for each implemented spec.
 - Agent personas (Researcher, Drafter, Reviewer, etc.) referenced by skills.
 
@@ -130,6 +130,17 @@ no workflow: it holds the deterministic work that has an objectively right answe
 (parse a JSON export, check a card's shape, grep for seam residue) and that a
 language model should not be re-deriving per call. Skills invoke it via the `bd`
 CLI. If a thing requires judgement, it belongs in a skill, not in `bdcore`.
+
+**Amendment (v0.2)**: the original text above claimed the bundle was installable
+"in any Claude Code session" and listed only `plugin.json` under "Plugin shape."
+That was wrong: `plugin.json` alone does not make a repo installable via
+`/plugin install` from GitHub — Claude Code also needs a
+`.claude-plugin/marketplace.json` declaring the marketplace and pointing at the
+plugin (here, one entry with `source: "./"`, since the plugin root is the repo
+root). Neither this decision nor `docs/roadmap.md` C6 mentioned that file; the
+gap went unnoticed until it was checked against the install path directly. Both
+files now exist at the repo root and pass `claude plugin validate . --strict`.
+The "Plugin shape" list above is corrected to name both.
 
 ---
 
