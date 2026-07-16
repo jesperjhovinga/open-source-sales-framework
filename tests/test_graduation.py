@@ -91,10 +91,13 @@ def test_only_the_last_window_counts(repo):
 
 
 def test_rejects_are_excluded_from_the_edit_rate_mean(repo):
-    log(repo, WINDOW - 1, edit_rate=0.0)
+    # A non-zero rate is load-bearing: with edit_rate=0.0 this test would pass
+    # even if a reject's None were diluted in as a zero. At 0.05, exclusion gives
+    # 0.05 and dilution would give 29*0.05/30 = 0.0483 — so the bug cannot hide.
+    log(repo, WINDOW - 1, edit_rate=0.05)
     log(repo, 1, outcome=REJECTED)
     s = status_for("outreach-drafting", repo)
-    assert s.edit_rate == pytest.approx(0.0)  # not diluted by the reject
+    assert s.edit_rate == pytest.approx(0.05)  # the reject is excluded, not counted as zero
 
 
 def test_a_version_bump_resets_the_window(repo):
