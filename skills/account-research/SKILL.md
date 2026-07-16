@@ -25,8 +25,8 @@ Search the web for the following signals. Cite sources or flag as inference — 
 
 **Company basics:**
 - What do they do (core service or product)?
-- How many people (LinkedIn, company site, ZoomInfo, Apollo, KvK)?
-- Revenue model — commercial fees, grants, government contracts?
+- How many people (LinkedIn, company site, ZoomInfo, Apollo, a local company registry)?
+- Revenue model — how the company makes money, and whether that matches any revenue-type criteria in `context.icp()`?
 - HQ location — meets the geography criteria in `context.icp()`?
 - Website
 
@@ -37,17 +37,17 @@ Search the web for the following signals. Cite sources or flag as inference — 
 - Job postings (signals growth areas and priorities)
 
 **Key people:**
-- Decision-maker: Founder/MD/CEO — or the local-language equivalent title, per `context.tone` — with budget authority
+- Decision-maker: per the buyer persona(s) defined in `context.icp()` — the title(s) or role(s) with authority over this purchase, rendered in the local-language equivalent per `context.tone`
 - Champion candidate: someone technical or operational who would benefit from the org's work
 - Anyone connected to the warm signal (e.g. the person who engaged on LinkedIn)
 
 **Proposition fit:**
 - Which proposition from `context.positioning()` fits better, and why?
 - What specific problem would the org solve for them?
-- Is there a repeatable methodology, internal tool, or operational process that could become a digital product?
+- What in their current operations creates an opening for the org's proposition, per `context.positioning()`?
 
 **Competitive context:**
-- What alternatives would they consider (freelancers, agencies, low-code platforms, hiring in-house)?
+- What alternatives would they consider — per `context.competitors()` and the account's specific situation?
 - What makes the org's approach different in this specific context?
 
 If public data is thin on any section, write "insufficient public information" — do not invent.
@@ -105,7 +105,7 @@ Add a final row for the ICP's disqualifiers (also returned by `context.icp()`).
 ---
 
 ## Proposition fit
-[Which proposition from `context.positioning()` fits, and why. What specific problem it solves. Custom framing — never mention specific entry-format names.]
+[Which proposition from `context.positioning()` fits, and why. What specific problem it solves. Custom framing, tied to what `context.positioning()` actually defines — don't invent proposition or offer-format names it doesn't have.]
 
 ---
 

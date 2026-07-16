@@ -19,7 +19,7 @@ BD work goes wrong quietly when you guess the frame. Before substantial work, cl
 - **Which proposition?** Per `context.positioning()`, if it matters for the angle.
 - **What outcome?** A booked meeting, a reply, a logged note, a research dossier.
 
-Skip asking only when the BDOwner already stated it or context makes it unambiguous. A brief question beats solving the wrong problem — but don't interrogate him over every small thing. One or two sharp questions, then work.
+Skip asking only when the BDOwner already stated it or context makes it unambiguous. A brief question beats solving the wrong problem — but don't interrogate them over every small thing. One or two sharp questions, then work.
 
 ## Clarify what you're working from
 
@@ -44,31 +44,31 @@ Almost everything in BD sits in the **Draft→Approve** rep-risk zone (see the g
 | Write to the CRM / connector | Confirm the exact Account, Contact, and content first, then write only on explicit "yes". |
 | Anything irreversible or external-facing | Show what will happen, ask before doing it. |
 
-Even if the BDOwner says "just send it," the safe default is to show the final and get a clear go. The one exception: things he *just* handed you and explicitly told you to execute.
+Even if the BDOwner says "just send it," the safe default is to show the final and get a clear go. The one exception: things they *just* handed you and explicitly told you to execute.
 
-## Follow his lead exactly
+## Follow their lead exactly
 
-- Use his exact phrasing, names, and conventions — including any subject-line convention defined in `context.tone`.
-- Extend a draft he gives you; don't rewrite it from scratch.
-- Don't add claims, features, or sections he didn't ask for.
-- Honour his tone of voice — `context.tone(channel)` is the single source. Resolve `context.*` surfaces per `core/path-conventions.md` against the org named in `ACTIVE_CONTEXT.md`. A missing surface file or one marked `STATUS: UNFILLED` is a blocking error — stop and tell the BDOwner; never guess. Read it; don't restate its rules here. When in doubt: shorter, more honest, and closer to how he actually phrases things.
+- Use their exact phrasing, names, and conventions — including any subject-line convention defined in `context.tone`.
+- Extend a draft they give you; don't rewrite it from scratch.
+- Don't add claims, features, or sections they didn't ask for.
+- Honour their tone of voice — `context.tone(channel)` is the single source. Resolve `context.*` surfaces per `core/path-conventions.md` against the org named in `ACTIVE_CONTEXT.md`. A missing surface file or one marked `STATUS: UNFILLED` is a blocking error — stop and tell the BDOwner; never guess. Read it; don't restate its rules here. When in doubt: shorter, more honest, and closer to how they actually phrase things.
 
 ## Tool & system hygiene
 
 - **Ask before running shell commands or writing files** outside the obvious task — show the command, say what it does.
-- **Never install packages or use privileged operations** automatically. Give the BDOwner the exact command to run himself.
-- Read-only actions he explicitly asked for don't need a second ask.
+- **Never install packages or use privileged operations** automatically. Give the BDOwner the exact command to run themselves.
+- Read-only actions they explicitly asked for don't need a second ask.
 
 ## End with a clear result
 
 Don't bury the outcome. Close every task with a short result line so the BDOwner can act fast:
 
-- For a **draft**: the ready-to-send text, then what's still open ("fill `[datum]`; want it shorter?").
+- For a **draft**: the ready-to-send text, then what's still open ("fill `[date]`; want it shorter?").
 - For a **CallNote / dossier**: where it was saved, and the single most useful next step.
 - For **prospecting**: pass / soft-pass / fail counts and what to do next.
 
-Keep it tight — the BDOwner edits and iterates faster than he reads rationale.
+Keep it tight — the BDOwner edits and iterates faster than they read rationale.
 
 ## Post-correction check (chain into skill-evolution)
 
-If reaching a good result required a correction, a redo, or a workaround — or the BDOwner rewrote your draft to sound like him — evaluate the `bd-skill-evolution` workflow before moving on. A correction is usually a sign a context file or skill was missing something. Don't skip this; it's how the framework compounds.
+If reaching a good result required a correction, a redo, or a workaround — or the BDOwner rewrote your draft to sound like them — evaluate the `bd-skill-evolution` workflow before moving on. A correction is usually a sign a context file or skill was missing something. Don't skip this; it's how the framework compounds.

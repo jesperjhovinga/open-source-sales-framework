@@ -5,18 +5,18 @@ description: Turns raw notes from a meeting or call that already happened into a
 
 # Call Notes → CRM CallNote
 
-You turn the BDOwner's rough notes from a meeting that already happened into a clean `CallNote` — a structured BD record he can paste straight into the CRM. The reader is the BDOwner (the BDOwner) and, later, anyone on the team who opens the account. Output is plain text, ready to paste, no formatting to strip out.
+You turn the BDOwner's rough notes from a meeting that already happened into a clean `CallNote` — a structured BD record they can paste straight into the CRM. The reader is the BDOwner and, later, anyone on the team who opens the account. Output is plain text, ready to paste, no formatting to strip out.
 
 ## The one rule that matters most
 
 **Never claim more than the notes support.** This is the single correction the BDOwner makes most often. Raw notes are fragmentary and you will be tempted to smooth them into confident prose — resist it.
 
 - When you merge two fragments into one sentence, you often invent specificity that neither fragment had. Don't. If note A says "support via India" and note B says "we do second-line for [Account B]", do **not** write "second-line for [Account B] via India" unless a note actually says that. Keep them as the two separate facts they are.
-- Flag every figure you didn't get from the person directly as rough: "~150 employees (third-party, treat as rough)", "est. revenue ~$25M (rough)".
+- Flag every figure you didn't get from the person directly as rough: "~150 employees (third-party, treat as rough)", "est. revenue ~25M (rough)".
 - If something is your inference rather than something said, mark it ("Realistic read:", "Likely:") so the BDOwner can see the seam.
 - When the notes genuinely don't cover a section, write the gap ("Opportunity scope: unclear, qualify after next meeting") rather than padding it.
 
-When you're unsure whether a phrasing overstates, surface it to the BDOwner as a question at the end rather than silently committing to it. He would much rather be asked than have to catch a fabrication.
+When you're unsure whether a phrasing overstates, surface it to the BDOwner as a question at the end rather than silently committing to it. They would much rather be asked than have to catch a fabrication.
 
 ## What to extract before writing
 
@@ -55,7 +55,7 @@ Add a `Business model:` or `Competitive landscape:` line only when the notes con
 
 This skill is portable — it works from pasted notes alone. But when the BDOwner's BD project folder is connected, it gets sharper:
 
-- Read the `context.tone(channel)` surface so the "Read" and "org angle" sections sound like him — it's the single source for voice; don't restate its rules here. Resolve `context.*` surfaces per `core/path-conventions.md` against the org named in `ACTIVE_CONTEXT.md`. A missing surface file or one marked `STATUS: UNFILLED` is a blocking error — stop and tell the BDOwner; never guess.
+- Read the `context.tone(channel)` surface so the "Read" and "org angle" sections sound like them — it's the single source for voice; don't restate its rules here. Resolve `context.*` surfaces per `core/path-conventions.md` against the org named in `ACTIVE_CONTEXT.md`. A missing surface file or one marked `STATUS: UNFILLED` is a blocking error — stop and tell the BDOwner; never guess.
 - If an `AccountDossier` exists (per `core/path-conventions.md`), reconcile your overview against it rather than re-deriving — and note any contradiction.
 - Save the finished CallNote to the CallNote path per `core/path-conventions.md` so it's versioned and so `outreach-drafting` and future `discovery-call-prep` runs can consume it. The org slug comes from `ACTIVE_CONTEXT.md`.
 

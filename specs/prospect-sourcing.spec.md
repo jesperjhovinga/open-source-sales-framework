@@ -25,7 +25,7 @@ This workflow produces a deduplicated, ICP-filtered, enriched contact list ready
 ## Inputs
 
 ### From BDOwner
-- One LinkedIn profile URL of a target ICP persona (e.g. a founder at a specialist firm matching the org's ICP).
+- One LinkedIn profile URL of a target ICP persona (a person matching the buyer persona defined in `context.icp()`).
 - Number of posts to mine: default 5, minimum 3.
 
 ### From BD Core / Org Context
@@ -46,7 +46,7 @@ This workflow produces a deduplicated, ICP-filtered, enriched contact list ready
 3. **ICP filter** — Score each Contact's organization against `context.icp()`:
    - **Pass**: meets every qualification criterion `context.icp()` defines (e.g. size band, revenue type, buyer persona, geography/reachability — whatever that org's ICP specifies), with no disqualifiers present.
    - **Soft pass**: matches most criteria, one signal missing or unverifiable — flag for manual review.
-   - **Fail**: disqualifiers present (government-funded, public sector clients, no decision authority, outside the ICP's geography/reachability criteria) — exclude.
+   - **Fail**: any disqualifier `context.icp()` defines is present, or the account falls outside its geography/reachability criteria — exclude.
    - Add column `icp_score`: `pass` / `soft_pass` / `fail`.
 
 4. **Geography filter** — Apply before enrichment to avoid burning Apollo credits on out-of-scope contacts. Exclude contacts whose location and org fall outside the geography/reachability criteria in `context.icp()`.

@@ -34,7 +34,7 @@ For every `soft_pass` contact where a company name is visible in the `company_na
 **Scoring rules:**
 - `pass` — all ICP criteria confirmed
 - `soft_pass` — all but one confirmed, or a buyer-authority title without confirmed company size
-- `fail` — any hard disqualifier from `context.icp()` confirmed, or no decision authority
+- `fail` — any hard disqualifier from `context.icp()` confirmed
 
 **Hard disqualifiers (immediate fail):** defined in `context.icp()` — any confirmed match is an immediate fail.
 

@@ -16,7 +16,7 @@ Persistent things with identity.
 - **CallNote** — structured record of a Meeting. Has: SPICED fields, action items, next step.
 - **Proposal** — formal offer. Has: scope, pricing, terms, version.
 - **Contract / SoW** — signed commitment. Has: party, value, effective date.
-- **Workshop** — org-specific engagement (workshop-led motion). Has: participants, proposition, outcome.
+- **EngagementSession** — a scheduled, structured interaction the org runs with a prospect beyond a standard call (workshop, demo, technical session — whatever format the org's motion uses). Has: participants, proposition, outcome.
 - **ICPDefinition** — ideal customer profile for a proposition. Has: filters, qualification criteria.
 - **TargetAccountList** — Accounts selected from ICP. Has: proposition, accounts, prioritization.
 - **Competitor** — alternative the prospect considers. Has: positioning, known weaknesses, our angle.
@@ -47,13 +47,13 @@ Things that happened. Past tense.
 
 ## Actors
 
-- **BDOwner** — the human (the human owner at the org). Owns the Opportunity through the BD phase.
+- **BDOwner** — the human doing BD for the org; the framework drafts and researches on their behalf, and they review and approve every Draft→Approve output before it goes out. Owns the Opportunity through the BD phase.
 - **Prospect** — external person not yet qualified into a role.
 - **Champion** — internal advocate at the Account.
 - **DecisionMaker** — has authority to sign.
 - **InternalSME** — colleague who provides domain expertise.
 - **DeliveryTeam** — takes over at Onboarding handoff.
-- **WorkshopParticipant** — attends a Workshop run by the org.
+- **EngagementParticipant** — attends an EngagementSession run by the org.
 
 ## Stages (Winning by Design Bowtie)
 

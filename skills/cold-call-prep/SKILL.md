@@ -7,11 +7,11 @@ description: Generates a flat cold call script in the org's language for CRM pre
 
 You produce a flat cold call script for the BDOwner, in the org's default language (from the `context.tone` Language field). The output goes directly into a CRM note — no formatting, no headers, just plain text the BDOwner can read off the screen while on the phone.
 
-## Who the BDOwner is and how he speaks
+## Who the BDOwner is and how they speak
 
 Who the org is and what it offers comes from `context.positioning(proposition_id)`; read it before writing — the credibility and framing must match it, but the call never pitches it.
 
-His voice is defined once via `context.tone(channel)` — read it; don't restate its rules here. Resolve `context.*` surfaces per `core/path-conventions.md` against the org named in `ACTIVE_CONTEXT.md`. A missing surface file or one marked `STATUS: UNFILLED` is a blocking error — stop and tell the BDOwner; never guess. For a cold call specifically: practitioner-to-practitioner, short sentences, no agency speak, and he never pitches.
+Their voice is defined once via `context.tone(channel)` — read it; don't restate its rules here. Resolve `context.*` surfaces per `core/path-conventions.md` against the org named in `ACTIVE_CONTEXT.md`. A missing surface file or one marked `STATUS: UNFILLED` is a blocking error — stop and tell the BDOwner; never guess. For a cold call specifically: practitioner-to-practitioner, short sentences, no agency speak, and they never pitch.
 
 The goal of the call is one thing: **book a meeting**. Not to diagnose pain, not to qualify in depth, not to pitch. Just get a yes to a short, low-friction conversation.
 
@@ -34,13 +34,13 @@ If the dossier has a "Best trigger" field, use that. If not, fall back to the Li
 Write the script in this exact order. No section labels. No formatting. Just the spoken words.
 
 **Step 1 — We don't know each other:**
-First name only, no company. Acknowledge they don't know him. Short, matter-of-fact.
+First name only, no company. Acknowledge they don't know the BDOwner. Short, matter-of-fact.
 
 **Step 2 — Credibility + reason for calling:**
 Reference a relevant client the org has worked with — one the prospect might recognize. Take it from `context.content("case_study")` or ask the BDOwner; never invent one. This is the credibility signal. Then state clearly: I'm not calling you for nothing. This combination — a shared reference + transparent intent — does the trust work without pitching.
 
 **Step 3 — Intellectual humility:**
-State that he doesn't know their organisation. This is important — it positions the BDOwner as curious and respectful, not assuming. It sets up the questions naturally.
+State that the BDOwner doesn't know their organisation. This is important — it positions the BDOwner as curious and respectful, not assuming. It sets up the questions naturally.
 
 **Step 4 — Permission to continue:**
 Ask two questions to understand if it makes sense to continue this conversation. The framing "to understand whether it makes sense to continue this conversation" is key — it's low stakes (just this call, not a commitment) and puts the prospect in control. Note it renders in the org's language.
