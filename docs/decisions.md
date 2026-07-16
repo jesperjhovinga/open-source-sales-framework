@@ -201,6 +201,17 @@ graduation evidence that should have reset. This is why Decision 11 could be
 rewritten to stop resetting the graduation window on every bump: MAJOR/MINOR
 gives it a real distinction to key on.
 
+**Carve-out:** correcting a spec that inaccurately described existing
+behaviour — org residue baked into a Process step or Acceptance criterion that
+never matched what the workflow actually did, or that contradicted the spec's
+own unchanged Inputs section naming a contract surface as the source of truth
+— is editorial (MINOR, or no bump for a spec still at 0.x). Only a change to
+what the workflow actually *does* going forward is MAJOR. This distinction
+matters because de-orging BD Core (`docs/roadmap.md` C1+C3) means rewriting
+spec text that hardcoded one org's criteria into a reference to the relevant
+contract surface; that rewrite must not be confused with the workflow's
+behaviour changing.
+
 ---
 
 ## Decision 11 — Graduation window and a spec version bump
