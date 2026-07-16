@@ -42,7 +42,7 @@ class Pending(NamedTuple):
 def pending(root: Path | None = None) -> list[Pending]:
     """Drafts of Draft→Approve specs with no decision logged against them."""
     root = root or find_root()
-    decided = {d.run for d in read_all(root)}
+    decided = {(d.spec, d.run) for d in read_all(root)}
     org_dir = root / "contexts" / active_org(root)
 
     items: list[Pending] = []
@@ -55,7 +55,7 @@ def pending(root: Path | None = None) -> list[Pending]:
             )
         for path in sorted((org_dir / subdir).glob("*.md")):
             run = path.stem
-            if run not in decided:
+            if (spec.id, run) not in decided:
                 items.append(Pending(spec=spec.id, run=run, path=path, text=path.read_text(encoding="utf-8")))
     return items
 
@@ -122,7 +122,7 @@ def _handler(root: Path) -> type[http.server.BaseHTTPRequestHandler]:
             length = int(self.headers.get("Content-Length", 0))
             form = urllib.parse.parse_qs(self.rfile.read(length).decode("utf-8"))
             field = {k: v[0] for k, v in form.items()}
-            item = next((p for p in pending(root) if p.run == field.get("run")), None)
+            item = next((p for p in pending(root) if p.spec == field.get("spec") and p.run == field.get("run")), None)
             if item is None:
                 self._send("<p>Unknown or already-decided draft.</p>", status=404)
                 return
@@ -137,6 +137,12 @@ def _handler(root: Path) -> type[http.server.BaseHTTPRequestHandler]:
                     after=field.get("after") if outcome == APPROVED else None,
                     reason=field.get("reason") or None if outcome == REJECTED else None,
                 )
+                # record() succeeded — the decision is valid. Only now, and only for an
+                # approval, does the artifact get overwritten with what was actually
+                # approved: a rejected draft keeps its original text, and a validation
+                # failure (caught below) never touches the file.
+                if outcome == APPROVED:
+                    item.path.write_text(field["after"], encoding="utf-8")
                 append(decision, root)
             except Exception as e:  # surfaced in the page; the ledger stays clean
                 self._send(f"<p>Not logged: {html.escape(str(e))}</p><p><a href='/'>Back</a></p>", status=400)

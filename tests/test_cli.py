@@ -104,6 +104,20 @@ def test_graduation_status_not_yet_shows_disclaimer(repo):
     assert "Graduation is reported, never applied. A human promotes the zone." in result.output
 
 
+def test_graduation_status_not_applicable_for_a_higher_zone(repo):
+    (repo / "specs" / "account-research.spec.md").write_text(
+        "**ID**: `account-research`\n**Version**: `v0.1`\n**Rep-risk zone**: Autonomous\n",
+        encoding="utf-8",
+    )
+    for i in range(30):
+        append(record(f"ar{i}", "account-research", "approved", repo, edit_rate=0.0), repo)
+    result = runner.invoke(app, ["graduation-status", "account-research"])
+    assert result.exit_code == 0
+    assert "not applicable" in result.output
+    assert "Autonomous" in result.output
+    assert "Graduation is reported, never applied. A human promotes the zone." in result.output
+
+
 @pytest.mark.skipif(os.geteuid() == 0, reason="root ignores file permissions; chmod 000 would not block reads")
 def test_log_approval_unreadable_ledger_fails_cleanly(repo):
     path = ledger_path(repo)

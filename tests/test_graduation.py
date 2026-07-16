@@ -3,6 +3,7 @@ import pytest
 from bdcore.graduation import (
     ELIGIBLE,
     INSUFFICIENT,
+    NOT_APPLICABLE,
     NOT_YET,
     WINDOW,
     status_for,
@@ -98,6 +99,21 @@ def test_rejects_are_excluded_from_the_edit_rate_mean(repo):
     log(repo, 1, outcome=REJECTED)
     s = status_for("outreach-drafting", repo)
     assert s.edit_rate == pytest.approx(0.05)  # the reject is excluded, not counted as zero
+
+
+def test_a_spec_above_draft_approve_is_not_applicable(repo):
+    # account-research is already Autonomous — there is no higher zone to
+    # promote it to, so "eligible" would be misleading even with a perfect
+    # 30-run record. Graduation simply does not apply here.
+    (repo / "specs" / "account-research.spec.md").write_text(
+        "**ID**: `account-research`\n**Version**: `v0.1`\n**Rep-risk zone**: Autonomous\n",
+        encoding="utf-8",
+    )
+    for i in range(WINDOW):
+        append(record(f"ar{i}", "account-research", APPROVED, repo, edit_rate=0.0), repo)
+    s = status_for("account-research", repo)
+    assert s.verdict == NOT_APPLICABLE
+    assert "Autonomous" in s.detail
 
 
 def test_a_version_bump_resets_the_window(repo):

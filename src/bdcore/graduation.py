@@ -16,7 +16,7 @@ from typing import NamedTuple
 
 from bdcore.context import find_root
 from bdcore.ledger import APPROVED, Decision, read_all
-from bdcore.specs import all_specs, load_spec
+from bdcore.specs import DRAFT_APPROVE, all_specs, load_spec
 
 WINDOW = 30
 MIN_APPROVAL_RATE = 0.90
@@ -25,6 +25,7 @@ MAX_EDIT_RATE = 0.10
 ELIGIBLE = "eligible"
 NOT_YET = "not yet"
 INSUFFICIENT = "insufficient data"
+NOT_APPLICABLE = "not applicable"
 
 
 class Status(NamedTuple):
@@ -50,6 +51,22 @@ def _window_for(decisions: list[Decision], spec_id: str, version: str) -> list[D
 def status_for(spec_id: str, root: Path | None = None) -> Status:
     root = root or find_root()
     spec = load_spec(spec_id, root)
+
+    if spec.zone != DRAFT_APPROVE:
+        # Graduation only makes sense for a spec still under Draft→Approve — a
+        # spec already in a higher zone has no zone left to be promoted to.
+        # Logging against it stays allowed (ledger.record does not gate on
+        # zone, for future spot-check sampling); only this verdict changes.
+        return Status(
+            spec=spec_id,
+            spec_version=spec.version,
+            runs=0,
+            approval_rate=None,
+            edit_rate=None,
+            verdict=NOT_APPLICABLE,
+            detail=f"zone is {spec.zone}, not {DRAFT_APPROVE} — graduation does not apply",
+        )
+
     window = _window_for(read_all(root), spec_id, spec.version)
 
     if len(window) < WINDOW:
