@@ -173,6 +173,16 @@ correct and still the common case.
 
 **Revisit when**: first breaking contract change ships (forces real semver discipline).
 
+**Amendment (v0.2)**: specs get real semver semantics, not just a "lightweight
+version field" — `vMAJOR.MINOR`. **MAJOR** bumps when the workflow's observable
+behaviour changes: process, acceptance criteria, or output shape — its
+graduation track record (Decision 1) does not transfer. **MINOR** bumps when
+the change is editorial only: clarified wording, a fixed typo, an added
+example — behaviour is identical, so evidence carries over. This distinction is
+why Decision 11 could be rewritten to stop resetting on every bump: "bumped when
+acceptance criteria or process changes" alone couldn't tell a wording fix from a
+behavioural change, so it had no way to say "nothing behavioural happened here."
+
 ---
 
 ## Decision 11 — Graduation window and a spec version bump
@@ -180,18 +190,23 @@ correct and still the common case.
 **Q**: When a spec's version bumps, do its previous runs still count toward the
 Decision 1 graduation bar?
 
-**Decision**: No. The 30-run window is per `(spec, spec_version)`. A version bump
-resets it.
+**Decision**: Depends on the kind of bump (Decision 10, v0.2 amendment). The
+30-run window is keyed on `(spec, MAJOR)`. A **MAJOR** bump resets it — a new
+major version is a materially different workflow. A **MINOR** bump does not —
+the workflow's behaviour is unchanged, so its evidence carries over.
 
-**Why**: A new spec version is a materially different workflow. Counting v0.1's
-approvals toward graduating v0.2 would grant autonomy on evidence produced by
-something else — precisely the unearned autonomy the bar exists to prevent. The
-cost is a slower clock after every spec edit; that is the right trade when the
-output is a decision to stop reviewing a prospect-facing message.
+**Why**: Decision 1's bar exists to earn autonomy on real evidence. Resetting on
+every bump (the original v0.1 rule) counted a typo fix as a new workflow and
+threw away a nearly-graduated track record for no behavioural reason — the
+mirror-image failure of counting v0.1's evidence toward a materially different
+v0.2. Keying on MAJOR gets both right: an editorial fix doesn't cost 30 runs,
+and a real behaviour change still starts its own clock.
 
-**Revisit when**: trivial spec edits (a typo, a reworded heading) are observed
-resetting a nearly-graduated workflow. The fix then is a version scheme that
-distinguishes editorial from behavioural change, not counting across behaviours.
+**Revisit when**: an author bumps MAJOR out of caution for a change that was
+really editorial (losing evidence they didn't need to lose), or bumps MINOR for
+a change that turns out to be behavioural (hiding a change graduation should
+have reset on). Either observed in practice means the MAJOR/MINOR line needs
+tightening, not just trusting the author's judgement call.
 
 ---
 
