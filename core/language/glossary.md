@@ -53,7 +53,7 @@ Things that happened. Past tense.
 - **DecisionMaker** — has authority to sign.
 - **InternalSME** — colleague who provides domain expertise.
 - **DeliveryTeam** — takes over at Onboarding handoff.
-- **EngagementParticipant** — attends an EngagementSession run by the org.
+- **EngagementSessionParticipant** — attends an EngagementSession run by the org.
 
 ## Stages (Winning by Design Bowtie)
 
@@ -97,3 +97,8 @@ Discovery framework. Every discovery call and prep spec uses these dimensions.
 - Glossary terms are capitalized when referenced in specs (`Account`, `OutreachSequence`).
 - New terms are added here before being used in a spec.
 - Deprecated terms are struck through and kept for one version before removal.
+  Exception: a term whose own definition says it's org-specific (e.g. the
+  former `Workshop`/`WorkshopParticipant` pair, self-declared "org-specific
+  engagement") should never have been in BD Core's shared vocabulary at all —
+  removing it corrects a seam violation, not evolving a term, so it's dropped
+  outright rather than carried for a version.
