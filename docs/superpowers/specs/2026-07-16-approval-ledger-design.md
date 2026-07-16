@@ -73,7 +73,8 @@ New `skills/outreach-drafting/SKILL.md`, implementing the existing
 
 **Retires the four colliding trigger surfaces** — `bd-email`, `cold-email`,
 `email-sequence`, `event-invite` — per roadmap C4. Deleted; content preserved in git
-history. Their seam-baseline entries are removed in the same change.
+history. Of the four, only `event-invite` carries a seam-baseline entry (`org-name`);
+it is removed in the same change and the baseline regenerated.
 
 ### 2. The ledger
 
@@ -95,7 +96,21 @@ One line per decision:
   third state — one less thing to keep consistent.
 - `run` is a label, not a file path. The approval moment is conversational; the draft
   may never be a file.
-- `spec_version` is recorded because the graduation window depends on it (below).
+- `spec_version` and `zone` are **stamped by the tool** from the spec's header
+  (`specs/<spec-id>.spec.md`), never supplied by the caller. The caller passes
+  `--spec`; the framework's own contract decides the rest. A metric a caller can
+  self-report is a metric a caller can flatter.
+
+**What a run is.** One row = one decision. A draft only becomes a run when a decision
+is made, so abandoned drafts are not runs (and cannot dilute an approval rate). A
+redraft after a rejection is a **new** run with a new seq-id, not an amendment of the
+old one — so the rejection stays on the record. The tool does not dedupe: two rows for
+one run id means two decisions were logged, and both count.
+
+**A malformed ledger line is a blocking error, not a skipped line.** Silently ignoring
+an unparseable row would change a safety metric without telling anyone — the exact
+"silent fallback" cross-cutting principle 5 forbids. `graduation-status` refuses to
+compute over a corrupt ledger rather than quietly computing over part of one.
 
 ### 3. Capture — the part that makes it real
 
@@ -109,6 +124,23 @@ skill's final step calls `bd log-approval` at the moment the BDOwner approves, e
 or rejects. The runtime is Claude; Claude is already present at that moment and does
 the logging.
 
+### 3b. CLI surface
+
+```
+bd log-approval <run> --spec <spec-id> --outcome approved|rejected
+                      [--before FILE --after FILE | --edit-rate FLOAT]
+                      [--reason TEXT]
+bd graduation-status [spec-id]
+bd review [--port N]
+```
+
+- `--spec` is required; `spec_version` and `zone` are read from that spec's header.
+- `--before/--after` computes the edit rate (the default path); `--edit-rate` supplies
+  it directly. Both given is an error — two sources of one number.
+- `--reason` is **required for `rejected`** (principle 1 asks for a rejection reason)
+  and rejected with `--edit-rate`, which is meaningless for a reject.
+- Unknown spec, or a spec whose file is missing, is a blocking error — never a guess.
+
 ### 4. Metrics
 
 Over the last N runs of a spec:
@@ -120,6 +152,13 @@ Over the last N runs of a spec:
 - **Word-edit-rate** is computed by the tool from the before/after texts when both are
   available (the default), or supplied explicitly via `--edit-rate` when the edit
   happened elsewhere. One definition, in one place.
+
+**`mean` is an interpretation, and it has a known blind spot.** Decision 1 says
+"<10% word-edit-rate" without saying how to aggregate. Mean is the plain reading and
+what this design implements — but it can mask an outlier: 29 untouched drafts and one
+total rewrite average to ~3% and pass the gate. Recorded here so the choice is visible;
+if it bites, a percentile gate is the fix, and the raw per-run rates are in the ledger
+to recompute against.
 
 **Two different edit-rate thresholds exist and must not be confused:**
 
@@ -148,12 +187,16 @@ bump.** This is recorded in `docs/decisions.md`, not buried in code.
 
 ### 6. The review surface
 
-`bd review` serves a dashboard on localhost (stdlib `http.server`, no new dependency)
-and opens a browser.
+`bd review` serves a dashboard bound explicitly to `127.0.0.1` (stdlib `http.server`,
+no new dependency) and opens a browser. It renders unsent drafts to real prospects and
+appends to an audit log, so it binds to loopback only — never `0.0.0.0` — and is not
+an authenticated surface meant to be exposed.
 
 - **Pending** = an artifact under a Draft→Approve spec's output dir with no ledger
-  entry. Derived — no queue to maintain, no state to sync. This only works because
-  §1 ships a skill that actually writes those artifacts.
+  entry for its run id. Derived — no queue to maintain, no state to sync. This only
+  works because §1 ships a skill that actually writes those artifacts. A redraft is a
+  new seq-id (see "What a run is"), so it reappears as pending; a decided draft never
+  does.
 - Each pending draft renders its content with three actions: **Approve**,
   **Edit-and-approve** (a textarea; the diff against the original *is* the edit rate),
   **Reject** (reason required).
