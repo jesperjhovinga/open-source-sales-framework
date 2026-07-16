@@ -35,6 +35,8 @@ For each Org Context at `contexts/<org-slug>/`:
 - `contexts/<org>/outreach/<account-slug>-<contact-slug>-<seq-id>.md` — OutreachSequence draft.
 - `contexts/<org>/call-notes/<account-slug>-<meeting-date>.md` — CallNote.
 - `contexts/<org>/retrospectives/<deal-slug>.md` — Post-deal retrospective.
+- `contexts/<org>/ledger/approvals.jsonl` — the approval ledger. Append-only; one
+  JSON record per Draft→Approve decision. Consumed by `bd graduation-status`.
 
 ## Spec & skill paths
 

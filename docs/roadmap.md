@@ -50,6 +50,8 @@ Remaining:
       from birth, logs its own approval outcome. Retired the four colliding
       trigger surfaces (bd-email, cold-email, email-sequence, event-invite) —
       content stays in git history.
+- [x] It is instrumented: every approval decision lands in the ledger, so
+      Decision 1's graduation rule has data to read.
 
 ## C6 — Packaging & truth
 - [ ] `.claude-plugin/plugin.json` (Decision 8).

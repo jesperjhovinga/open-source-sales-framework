@@ -16,6 +16,13 @@ Resolved 2026-04-28 with AI-first, autonomy-leaning best-practice defaults. Each
 
 **Revisit when**: dashboard ships and meets ≥3 weeks usage. Reconsider Slack/Teams notifications if email feels too slow.
 
+**Amendment (v0.2)**: the review surface ships as `bd review` — a dashboard served
+on loopback by the CLI, not a hosted app. Same page, same three actions, and the
+structured feedback still lands in the ledger. Mobile and email notifications are
+**not** built: they need hosting infrastructure and are a separate concern from the
+metric. The auto-graduation rule is computed and **reported** by
+`bd graduation-status`; it never flips a zone. Promotion stays a human act.
+
 ---
 
 ## Decision 2 — Source citation format
@@ -165,6 +172,26 @@ correct and still the common case.
 **Why**: Contract is the load-bearing API; semver makes breaking changes visible and forces every Org Context to update on bumps. Specs are working documents — light is enough. Date tags = handoff/rollback markers.
 
 **Revisit when**: first breaking contract change ships (forces real semver discipline).
+
+---
+
+## Decision 11 — Graduation window and a spec version bump
+
+**Q**: When a spec's version bumps, do its previous runs still count toward the
+Decision 1 graduation bar?
+
+**Decision**: No. The 30-run window is per `(spec, spec_version)`. A version bump
+resets it.
+
+**Why**: A new spec version is a materially different workflow. Counting v0.1's
+approvals toward graduating v0.2 would grant autonomy on evidence produced by
+something else — precisely the unearned autonomy the bar exists to prevent. The
+cost is a slower clock after every spec edit; that is the right trade when the
+output is a decision to stop reviewing a prospect-facing message.
+
+**Revisit when**: trivial spec edits (a typo, a reworded heading) are observed
+resetting a nearly-graduated workflow. The fix then is a version scheme that
+distinguishes editorial from behavioural change, not counting across behaviours.
 
 ---
 

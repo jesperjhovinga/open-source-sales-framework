@@ -55,6 +55,21 @@ The seam check ships with a **baseline** of org residue that already existed (se
 
 Secrets: copy `.env.example` to `.env` (gitignored) if you wire up a connector that needs API keys. Most connectors bind through Claude's MCP and need none.
 
+## Governed autonomy
+
+Autonomy is earned, not assumed. Every Draft→Approve run is logged, and the
+record decides when a workflow may be trusted further.
+
+```bash
+bd review                      # approve / edit / reject pending drafts
+bd graduation-status           # has a workflow earned a higher zone yet?
+```
+
+The ledger is append-only at `contexts/<org>/ledger/approvals.jsonl` (org data —
+gitignored, never committed). `bd graduation-status` applies Decision 1's bar:
+≥90% approval and <10% word-edit-rate over 30 consecutive runs at the same spec
+version. It **reports**; a human promotes the zone.
+
 ## License
 
 MIT — see `LICENSE`.
