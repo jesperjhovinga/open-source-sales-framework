@@ -193,4 +193,10 @@ def check_docs() -> None:
     if broken:
         typer.secho(f"\n{len(broken)} doc(s) lying about the repo.", fg=typer.colors.RED)
         raise typer.Exit(1)
-    typer.secho("Docs tell the truth — every claimed path exists.", fg=typer.colors.GREEN)
+    typer.secho(
+        "Docs tell the truth — every backticked path and bare `.md` filename this checker "
+        "recognizes points at something real. This is not proof against every doc claim: a "
+        "path mentioned without backticks, a bare filename with any other extension, or a bare "
+        "filename that resolves to the wrong same-named file all pass unseen.",
+        fg=typer.colors.GREEN,
+    )

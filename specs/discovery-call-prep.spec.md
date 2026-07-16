@@ -42,7 +42,7 @@ Researcher pulls dossier + prior context. Drafter produces a DiscoveryPrepDoc wi
 3. Working hypothesis — the problem we believe they have + our entry angle.
 4. SPICED-aligned agenda — Situation, Pain, Impact, Critical event, Decision criteria, exit question.
 5. Questions to ask (5–10, each mapped to a SPICED dimension).
-6. Likely objections + reframes (from `project_sales_enablement.md` + positioning).
+6. Likely objections + reframes (from `context.positioning()` — objection reframes are part of that surface, per `core/context-contract.md`).
 7. Proof points to keep handy (case studies, past engagement-session examples).
 8. Explicit unknowns — what we don't know and want to find out.
 

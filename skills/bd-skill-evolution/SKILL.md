@@ -60,14 +60,14 @@ When a learning holds, distill it into the framework. Match the writing style al
 
 ## Placement rule — target the single highest-impact home
 
-Put the learning where it has the widest effect, and don't duplicate it. This repo's bounded-context split (`STATE.md`) decides the target:
+Put the learning where it has the widest effect, and don't duplicate it. This repo's bounded-context split (`docs/architecture.md`) decides the target:
 
 1. **Org Context file** (`contexts/<org>/`) — if the learning is about *who to target*, *how the BDOwner sounds*, *positioning*, or *sourcing lessons*, it goes in the `context.icp`, `context.tone`, or `context.positioning` surface of the active org (files resolved per `core/path-conventions.md`), or the org's sourcing-method notes (org-local; not yet a contract surface). Resolve `context.*` surfaces per `core/path-conventions.md` against the org named in `ACTIVE_CONTEXT.md`. A missing surface file or one marked `STATUS: UNFILLED` is a blocking error — stop and tell the BDOwner; never guess. Highest impact, because every skill reads these via the context contract. Most BD learnings land here. Keep HOW (phrasing → `context.tone`) separate from WHAT (value/sectors/propositions → `context.positioning`).
 2. **A spec** (`specs/<id>.spec.md`) — if it changes the *shape* of a workflow (acceptance criteria, process steps), update the spec, since the spec is the contract.
 3. **A specific skill** (`skills/<name>/SKILL.md`) — if it's about executing one workflow: `outreach-drafting`, `call-notes-to-crm`, `cold-call-prep`, `account-research`, `prospect-sourcing`.
 4. **A new skill** — only if it fits nowhere above.
 
-If a learning would touch both a context file and a skill, prefer the context file — the skill already consumes it, so you avoid duplication and drift. Keep `core/` (the portable BD Core) free of any org-specific learning; that separation is non-negotiable per `STATE.md`.
+If a learning would touch both a context file and a skill, prefer the context file — the skill already consumes it, so you avoid duplication and drift. Keep `core/` (the portable BD Core) free of any org-specific learning; that separation is non-negotiable per `docs/architecture.md`.
 
 ## Proposal format
 
@@ -90,7 +90,7 @@ Apply only after the BDOwner approves. If they decline, do not persist. `Removal
 Learnings need a traceable origin so they're auditable later — the BDOwner's framework already runs on this discipline.
 
 - **Edits to an existing context file / spec / skill:** do not wrap content in HTML comment markers — the noise compounds and `git blame` already attributes every line. Make the audit trail the commit subject: start it with `bd-skill-evolution:` so it's greppable (e.g. `bd-skill-evolution: add <15-employee disqualifier to icp.md`).
-- **Decisions that change a default or rule:** add or update a dated entry in `docs/decisions.md` (the existing Q / Decision / Why / Revisit-when format), and bump the relevant line in `STATE.md` if it changes project status.
+- **Decisions that change a default or rule:** add or update a dated entry in `docs/decisions.md` (the existing Q / Decision / Why / Revisit-when format), and update the relevant line in `docs/roadmap.md` if it changes project status.
 - **A brand-new skill:** add `origin: bd-skill-evolution` to its frontmatter.
 
 ## Security & scope (non-negotiable)
