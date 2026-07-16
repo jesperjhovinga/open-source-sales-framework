@@ -76,10 +76,13 @@ def test_audit_may_report_paths_it_found_missing(docs):
         ("core/path-conventions.md", True),
         ("docs/roadmap.md", False),
         ("docs/audit-2026-06-25.md", False),
+        # A design doc specifies paths its implementation will create.
+        ("docs/superpowers/specs/2026-07-16-approval-ledger-design.md", False),
         # F4: the audit exemption is anchored to the root docs/ dir. A nested
         # audit-*.md must stay normative, or it could name missing paths freely.
         ("skills/foo/docs/audit-notes.md", True),
         ("core/docs/audit-x.md", True),
+        ("docs/superpowers/notes.md", True),
     ],
 )
 def test_is_normative(path, normative):

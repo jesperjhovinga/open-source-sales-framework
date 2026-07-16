@@ -4,10 +4,11 @@ Scans markdown for backticked repo-relative paths and checks them against the
 filesystem. Paths containing template placeholders (`<org>`, `{{name}}`) are
 unverifiable by definition and are skipped, not guessed at.
 
-Only *normative* docs are checked. A roadmap names paths it intends to create
-and an audit names paths it found missing; neither is lying, so both are exempt.
-Everything else — README, architecture, core/, specs/, skills/, contexts/ —
-describes the repo as it is now and must be true.
+Only *normative* docs are checked. A roadmap names paths it intends to create, a
+design doc names the paths its implementation will add, and an audit names paths
+it found missing; none of them is lying, so all are exempt. Everything else —
+README, architecture, core/, specs/, skills/, contexts/ — describes the repo as
+it is now and must be true.
 """
 
 import re
@@ -33,15 +34,19 @@ class Claim(NamedTuple):
 
 EXCLUDED_DIRS = {".git", ".claude", ".venv", "node_modules"}
 
-# Docs whose job is to name paths that do not exist: the roadmap plans them,
-# an audit reports them missing. Checking these produces exactly backwards
-# findings — see docs/audit-2026-06-25.md, which reports the missing
-# core/methodology/ and would otherwise be flagged for claiming it exists.
+# Docs whose job is to name paths that do not exist: the roadmap plans them, a
+# design doc specifies what its implementation will add, an audit reports them
+# missing. Checking these produces exactly backwards findings — see
+# docs/audit-2026-06-25.md, which reports the missing core/methodology/ and
+# would otherwise be flagged for claiming it exists.
 EXEMPT_DOCS = ("docs/roadmap.md",)
 # Anchored to the repo-root docs/ dir. Path.match matches from the right, so a
 # bare "docs/audit-*.md" would also exempt skills/x/docs/audit-y.md — a nested
 # doc could then lie freely. Match the full relative path instead.
-EXEMPT_PATTERNS = (re.compile(r"^docs/audit-[^/]*\.md$"),)
+EXEMPT_PATTERNS = (
+    re.compile(r"^docs/audit-[^/]*\.md$"),
+    re.compile(r"^docs/superpowers/specs/[^/]*\.md$"),
+)
 
 
 def is_normative(relative: Path) -> bool:
