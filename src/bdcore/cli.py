@@ -10,8 +10,10 @@ from typing import Annotated
 
 import typer
 
-from bdcore import cards, doctruth, engagers, seam
+from bdcore import cards, doctruth, engagers, graduation, ledger, seam
 from bdcore.context import ContextError, active_org, find_root
+from bdcore.ledger import LedgerError
+from bdcore.specs import SpecError
 
 app = typer.Typer(no_args_is_help=True, help="BD Core — validate, source, and enforce the seam.")
 check_app = typer.Typer(no_args_is_help=True, help="Enforce the framework's own rules.")
@@ -78,6 +80,70 @@ def context() -> None:
     except ContextError as e:
         typer.secho(f"ERROR: {e}", fg=typer.colors.RED, err=True)
         raise typer.Exit(1) from e
+
+
+@app.command("log-approval")
+def log_approval(
+    run: Annotated[str, typer.Argument(help="Run label, e.g. the draft's seq-id.")],
+    spec: Annotated[str, typer.Option("--spec", help="Spec id this run implements.")],
+    outcome: Annotated[str, typer.Option("--outcome", help="approved or rejected.")],
+    before: Annotated[Path | None, typer.Option("--before", help="Draft as generated.")] = None,
+    after: Annotated[Path | None, typer.Option("--after", help="Draft as approved.")] = None,
+    edit_rate: Annotated[float | None, typer.Option("--edit-rate", help="Explicit rate, 0.0-1.0.")] = None,
+    reason: Annotated[str | None, typer.Option("--reason", help="Required when rejecting.")] = None,
+) -> None:
+    """Record one Draft→Approve decision in the ledger."""
+    root = _root()
+    texts: dict[str, str] = {}
+    for name, path in (("before", before), ("after", after)):
+        if path is not None:
+            if not path.is_file():
+                typer.secho(f"ERROR: no {name} file at {path}", fg=typer.colors.RED, err=True)
+                raise typer.Exit(1)
+            texts[name] = path.read_text(encoding="utf-8")
+
+    try:
+        decision = ledger.record(
+            run,
+            spec,
+            outcome,
+            root,
+            before=texts.get("before"),
+            after=texts.get("after"),
+            edit_rate=edit_rate,
+            reason=reason,
+        )
+        ledger.append(decision, root)
+    except (LedgerError, SpecError, ContextError) as e:
+        typer.secho(f"ERROR: {e}", fg=typer.colors.RED, err=True)
+        raise typer.Exit(1) from e
+
+    rate = "n/a" if decision.edit_rate is None else f"{decision.edit_rate:.0%}"
+    typer.secho(
+        f"Logged {decision.outcome} for {decision.spec} {decision.spec_version} (edit rate {rate}).",
+        fg=typer.colors.GREEN,
+    )
+
+
+@app.command("graduation-status")
+def graduation_status(
+    spec: Annotated[str | None, typer.Argument(help="Spec id; omit for all specs.")] = None,
+) -> None:
+    """Report whether a workflow has earned a higher autonomy zone."""
+    root = _root()
+    try:
+        statuses = [graduation.status_for(spec, root)] if spec else graduation.all_statuses(root)
+    except (LedgerError, SpecError, ContextError) as e:
+        typer.secho(f"ERROR: {e}", fg=typer.colors.RED, err=True)
+        raise typer.Exit(1) from e
+
+    for s in statuses:
+        colour = {graduation.ELIGIBLE: typer.colors.GREEN, graduation.NOT_YET: typer.colors.YELLOW}.get(s.verdict)
+        approval = "—" if s.approval_rate is None else f"{s.approval_rate:.0%}"
+        edits = "—" if s.edit_rate is None else f"{s.edit_rate:.0%}"
+        typer.secho(f"{s.spec} {s.spec_version}: {s.verdict}", fg=colour)
+        typer.echo(f"    runs {s.runs}/{graduation.WINDOW}  approval {approval}  edit {edits}  — {s.detail}")
+    typer.echo("\nGraduation is reported, never applied. A human promotes the zone.")
 
 
 @check_app.command("seam")
