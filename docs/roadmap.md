@@ -3,7 +3,7 @@
 Source: architecture review 2026-07-14 (six candidates, verified findings).
 Order chosen for adoption impact: **C1+C3 → C2 → C5 → C4 → C6.**
 
-## C1+C3 — Make the seam real  ✅ partially shipped / 🔨 in progress
+## C1+C3 — Make the seam real  ✅ shipped
 Shipped: `contexts/_template/` (blank adapter), `contexts/example-corp/` (demo
 adapter), `ACTIVE_CONTEXT.md` resolution rule, .gitignore guard.
 Remaining:
@@ -20,14 +20,24 @@ Remaining:
       Removed Dutch content lives in git history (pre-extraction: 0aafb9f);
       a real org context carries it locally, never in git.
       (bd-email and event-invite are since retired — see C4.)
-- [ ] Secondary residue (found in the extraction audit, out of that scope):
+- [x] Secondary residue (found in the extraction audit, out of that scope):
       account-research dossier template (inline ICP table, Prop A/B pitch,
-      offer-format names) → `context.icp`/`context.positioning`;
-      bd-user-rules hardcoded subject convention → `context.tone`;
-      prospect-sourcing.spec.md "Netherlands filter" step → fold into the
-      C2 spec↔skill reconciliation; decide whether `src/bdcore/engagers.py`'s
-      multilingual headline separators (" at ", " bij ", …) are input-parsing
-      heuristics (fine) or belong in `headline_prefilter` config.
+      offer-format names) → `context.icp`/`context.positioning`, done;
+      bd-user-rules hardcoded subject convention → `context.tone`, done
+      (now "any subject-line convention defined in `context.tone`", no
+      hardcoded shape); prospect-sourcing.spec.md "Netherlands filter" step
+      → renamed "Geography filter", resolved from `context.icp()`
+      (the deeper spec↔skill reconciliation is still C2's job); reviewed
+      `src/bdcore/engagers.py`'s multilingual headline separators
+      (" at ", " bij ", …) — judged input-parsing heuristics, not ICP policy:
+      they recognize how *any* LinkedIn headline (in whatever language the
+      commenter wrote it) delimits title from company, which is independent
+      of the org's own `context.tone` language default. Left as-is; no code
+      change (out of scope for this pass — only `seam.py`'s `BASELINE`
+      changed in `src/bdcore/`). Seam baseline driven from 43 to 0 across
+      `core/`, `specs/`, `skills/`, including the callnote-template.md worked
+      example, which was rewritten in place with generic bracket placeholders
+      rather than moved to `contexts/example-corp/`.
 
 ## C2 — One source of truth per workflow
 - [ ] Reconcile prospect-sourcing spec↔skill (dedup key, enrichment call, ICP
