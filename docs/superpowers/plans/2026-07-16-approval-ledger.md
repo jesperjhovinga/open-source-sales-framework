@@ -13,7 +13,7 @@ Design doc: `docs/superpowers/specs/2026-07-16-approval-ledger-design.md`
 ## Global Constraints
 
 - **No new dependencies.** stdlib + typer (already present) only.
-- **Fail loud, never guess.** A missing spec, unknown spec-id, or malformed ledger line is a blocking error (cross-cutting principle 5). Library code raises; `cli.py` is the only layer that prints and sets an exit code.
+- **Fail loud, never guess.** A missing spec, unknown spec-id, or malformed ledger line is a blocking error (cross-cutting principle 5). Library code raises; `cli.py` is the only layer that prints and sets an exit code — one red `ERROR: ...` line, exit 1, never a traceback. This governs the failures the tool itself handles. Typer/Click's own option parsing (a non-numeric `--edit-rate`, a missing required option) keeps its native usage message and exit 2: that is the POSIX convention every CLI follows, it is already a clean message rather than a traceback, and overriding it would mean fighting the framework for worse UX.
 - **The seam is law.** New content in `skills/`, `specs/`, `core/` carries no org-specific data. The new skill must pass `bd check seam` with **no baseline entry**.
 - **Docs must not lie.** Any doc claim about a path must be true when the commit lands, or the doc must be roadmap/audit/design (exempt).
 - **The tool stamps `spec_version` and `zone`** from the spec header — never accepted from the caller.
