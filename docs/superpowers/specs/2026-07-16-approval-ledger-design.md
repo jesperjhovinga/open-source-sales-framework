@@ -104,8 +104,19 @@ One line per decision:
 **What a run is.** One row = one decision. A draft only becomes a run when a decision
 is made, so abandoned drafts are not runs (and cannot dilute an approval rate). A
 redraft after a rejection is a **new** run with a new seq-id, not an amendment of the
-old one — so the rejection stays on the record. The tool does not dedupe: two rows for
-one run id means two decisions were logged, and both count.
+old one — so the rejection stays on the record.
+
+**Two decisions on one run id are guarded twice, not left to "both count."**
+`ledger.append` is a **write-time duplicate guard**: it refuses to log a second
+decision against a run that already has one, so under normal operation one run
+produces exactly one row. That guard is check-then-act with no lock, so two
+concurrent `bd log-approval` calls on the same run can still both land (reproduced).
+For that race, and for a hand-edited or legacy ledger that predates the guard, the
+*read* side — `graduation._distinct_runs` — is a **first-wins distinct-run window**:
+it dedupes by run id, keeping the earliest decision. A later row can never supersede
+an earlier verdict on the same run, so an approval appended after a rejection cannot
+launder it out of the graduation window, even though the rejection is still
+physically in the file.
 
 **A malformed ledger line is a blocking error, not a skipped line.** Silently ignoring
 an unparseable row would change a safety metric without telling anyone — the exact

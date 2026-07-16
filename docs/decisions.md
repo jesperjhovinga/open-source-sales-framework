@@ -166,22 +166,29 @@ correct and still the common case.
 
 **Decision**:
 - **Context contract**: semver. `v0.1.0` today. Breaking changes bump major.
-- **Specs**: lightweight version field per spec, bumped when acceptance criteria or process changes.
+- **Specs**: `vMAJOR.MINOR` per spec. **MAJOR** bumps for any behavioural change —
+  acceptance criteria, process, or output shape — and resets the workflow's Decision 1
+  graduation track record; this holds **even at 0.x** — semver's usual convention that
+  0.x changes are exempt from breaking-change discipline does not apply here, because
+  Decision 1 evidence must never silently carry across a behavioural change. **MINOR**
+  bumps only for an editorial change (wording, a typo, an example) where behaviour is
+  identical, and evidence carries over.
 - **Repo releases**: date-tagged for milestones (`v2026.04.28`).
 
-**Why**: Contract is the load-bearing API; semver makes breaking changes visible and forces every Org Context to update on bumps. Specs are working documents — light is enough. Date tags = handoff/rollback markers.
+**Why**: Contract is the load-bearing API; semver makes breaking changes visible and forces every Org Context to update on bumps. Specs are working documents, but MAJOR/MINOR still has to be unambiguous because Decision 1's graduation evidence hangs on it. Date tags = handoff/rollback markers.
 
 **Revisit when**: first breaking contract change ships (forces real semver discipline).
 
-**Amendment (v0.2)**: specs get real semver semantics, not just a "lightweight
-version field" — `vMAJOR.MINOR`. **MAJOR** bumps when the workflow's observable
-behaviour changes: process, acceptance criteria, or output shape — its
-graduation track record (Decision 1) does not transfer. **MINOR** bumps when
-the change is editorial only: clarified wording, a fixed typo, an added
-example — behaviour is identical, so evidence carries over. This distinction is
-why Decision 11 could be rewritten to stop resetting on every bump: "bumped when
-acceptance criteria or process changes" alone couldn't tell a wording fix from a
-behavioural change, so it had no way to say "nothing behavioural happened here."
+**Amendment (v0.2)**: the original Decision text above has been edited in place —
+it originally said specs used a "lightweight version field... bumped when
+acceptance criteria or process changes," with no MAJOR/MINOR distinction. That
+wording could not tell a wording fix from a behavioural change, so a spec
+author had no way to say "nothing behavioural happened here," and — because
+every spec in this repo sits at `v0.1` — it invited the unsafe default of
+bumping straight to `v0.2` for a real behavioural change, silently carrying
+graduation evidence that should have reset. This is why Decision 11 could be
+rewritten to stop resetting the graduation window on every bump: MAJOR/MINOR
+gives it a real distinction to key on.
 
 ---
 
@@ -207,6 +214,12 @@ really editorial (losing evidence they didn't need to lose), or bumps MINOR for
 a change that turns out to be behavioural (hiding a change graduation should
 have reset on). Either observed in practice means the MAJOR/MINOR line needs
 tightening, not just trusting the author's judgement call.
+
+Also note: every spec in this repo currently sits at `v0.1`. The first
+behavioural change to any of them must bump to `v1.0`, not `v0.2` — `v0.2` is
+reserved for an editorial-only change. Treating `v0.2` as available for a
+spec's first behavioural change is exactly the unsafe default Decision 10's
+amendment exists to close off.
 
 ---
 
