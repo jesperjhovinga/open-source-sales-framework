@@ -41,15 +41,26 @@ you draft, the BDOwner approves and sends. Never send anything yourself.
 ## Output
 
 Write the draft to the OutreachSequence path in `core/path-conventions.md`:
-`contexts/<org>/outreach/<account-slug>-<contact-slug>-<seq-id>.md`.
+`contexts/<org>/outreach/<account-slug>-<contact-slug>-<seq-id>.md`. Call this
+filename, minus `.md`, **the stem** — it is also the run id (see below).
 
-Use a new `<seq-id>` for every redraft — a rejected draft keeps its record, and a
-new id is what makes the revision show up for review again. This includes
-pre-approval iteration: if the BDOwner asks for changes ("make it shorter",
-"different hook") before approving, write each revision to a **new** seq-id
-file rather than overwriting the one you already drafted. The original file is
-what `--before` names below; overwrite it and there is no original left to diff
-against, so a materially edited draft would log as a 0% edit.
+The first time you generate a draft for a stem, also copy it — byte-for-byte,
+unchanged — to `contexts/<org>/outreach/originals/<account-slug>-<contact-slug>-<seq-id>.md`.
+That copy is the frozen baseline: never write to it again. (`bd review`'s
+pending queue only looks directly inside `contexts/<org>/outreach/`, not its
+subdirectories, so this copy never itself shows up as a second pending draft.)
+
+If the BDOwner asks for changes before approving ("make it shorter", "different
+hook"), **overwrite the same stem file** — do not give the revision a new
+seq-id. The stem is the run id, and it must stay the same file through every
+pre-approval revision, or the draft forks into two pending items for one
+conceptual draft. Only `originals/<stem>.md` is frozen; `<stem>.md` itself is
+expected to change up until approval.
+
+Use a **new** `<seq-id>` only when drafting again **after a rejection** — a
+rejected run keeps its own record (see below), and giving the redraft a new id
+is what makes that next attempt show up for review as its own run. Never reuse
+a seq-id that already has a decision logged against it.
 
 Show the draft in the conversation too. The BDOwner approves, edits, or rejects.
 
@@ -65,27 +76,29 @@ stops being reviewed.** `--before`/`--after` compute the rate from the actual
 text; `--edit-rate` is a number you assert. Prefer the computed form whenever
 both texts exist.
 
-- `--before` is **the draft as first generated** — the file from the Output step
-  above, never overwritten by later iteration.
-- `--after` is the text that was actually approved — the last revision the
-  BDOwner signed off on, edited or not.
+- `--before` is `contexts/<org>/outreach/originals/<stem>.md` — the frozen,
+  first-generated copy from the Output step, whatever pre-approval iteration
+  happened after it was written.
+- `--after` is `contexts/<org>/outreach/<stem>.md` — the same stem file the
+  BDOwner actually approved, however many times it was revised before that.
 
-The id `bd log-approval` takes is the draft's full filename with `.md` dropped —
-`<account-slug>-<contact-slug>-<seq-id>` — not the bare `<seq-id>`. `bd review`'s
-dashboard matches ledger entries to drafts by that whole stem; log the bare
-seq-id instead and the draft never leaves the review queue even after it's been
-decided.
+The id `bd log-approval` takes is the stem — the draft's full filename with
+`.md` dropped (`<account-slug>-<contact-slug>-<seq-id>`), not the bare
+`<seq-id>`. `bd review`'s dashboard matches ledger entries to drafts by that
+whole stem; log the bare seq-id instead and the draft never leaves the review
+queue even after it's been decided.
 
 When the BDOwner responds, immediately run:
 
-- Approved (unchanged or after pre-approval revisions) — `--before` is the
-  first draft you wrote, `--after` is the one actually approved, so the rate is
-  computed even when nothing changed at the moment of approval:
-  `bd log-approval <account-slug>-<contact-slug>-<seq-id> --spec outreach-drafting --outcome approved --before <original-draft.md> --after <approved-draft.md>`
+- Approved (unchanged or after pre-approval revisions) — `--before` is always
+  `originals/<stem>.md`, `--after` is always the live `<stem>.md`, so the rate
+  is computed across every pre-approval iteration, not just whatever changed at
+  the moment of approval:
+  `bd log-approval <stem> --spec outreach-drafting --outcome approved --before contexts/<org>/outreach/originals/<stem>.md --after contexts/<org>/outreach/<stem>.md`
 - Rejected:
-  `bd log-approval <account-slug>-<contact-slug>-<seq-id> --spec outreach-drafting --outcome rejected --reason "<their reason>"`
+  `bd log-approval <stem> --spec outreach-drafting --outcome rejected --reason "<their reason>"`
 - `--edit-rate <n>` is for the rare case where the edit happened outside this
-  loop and neither the original nor the approved text is available as a file to
-  diff — not a shortcut for "nothing changed that I noticed."
+  loop and neither `originals/<stem>.md` nor the live `<stem>.md` is available
+  as a file to diff — not a shortcut for "nothing changed that I noticed."
 
 Do not ask permission to log. Do not skip it because the answer was "no".
