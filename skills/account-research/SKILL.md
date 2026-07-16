@@ -85,17 +85,22 @@ Use this exact structure:
 ---
 
 ## ICP fit
+Read `context.icp()` and build one row per qualification criterion it defines
+(for example: size band, revenue type, buyer persona, geography/reachability,
+differentiation — whatever that org's ICP actually specifies). Do not use a
+fixed list and do not fall back to default criteria if `context.icp()` is
+missing or `STATUS: UNFILLED` — that is a blocking error per
+`core/context-contract.md`; stop and tell the BDOwner instead of guessing.
+Add a final row for the ICP's disqualifiers (also returned by `context.icp()`).
+
 | Criterion | Signal | Score |
 |---|---|---|
-| Specialist firm | [evidence] | ✅ / 🟡 / ❌ |
-| Geography fit (per `context.icp()`) | [evidence] | ✅ / 🟡 / ❌ |
-| 15–150 people | [evidence] | ✅ / 🟡 / ❌ |
-| Commercial revenue | [evidence] | ✅ / 🟡 / ❌ |
-| Founder/CEO buyer | [evidence] | ✅ / 🟡 / ❌ |
-| Proprietary methodology / tool | [evidence] | ✅ / 🟡 / ❌ |
-| Disqualifiers | [any present?] | ✅ / ❌ |
+| [criterion 1, from `context.icp()`] | [evidence] | ✅ / 🟡 / ❌ |
+| [criterion 2, from `context.icp()`] | [evidence] | ✅ / 🟡 / ❌ |
+| [one row per remaining criterion in `context.icp()`] | [evidence] | ✅ / 🟡 / ❌ |
+| Disqualifiers (per `context.icp()`) | [any present? list them] | ✅ / ❌ |
 
-**ICP score: PASS / SOFT_PASS / FAIL**
+**ICP score**: **PASS** — every criterion met, no disqualifiers present. **SOFT_PASS** — most criteria met, one signal missing or unverifiable, no disqualifiers present. **FAIL** — a disqualifier is present, or multiple criteria are unmet.
 
 ---
 

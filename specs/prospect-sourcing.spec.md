@@ -44,7 +44,7 @@ This workflow produces a deduplicated, ICP-filtered, enriched contact list ready
 2. **Deduplicate** — Remove duplicate Contacts across posts. A person who engaged on 3 posts appears once. Dedup key: LinkedIn profile URL. Retain all engagement events in a `posts_engaged` column (comma-separated post URLs or titles).
 
 3. **ICP filter** — Score each Contact's organization against `context.icp()`:
-   - **Pass**: specialist firm, meets geography/reachability criteria (`context.icp()`), 15–150 people, commercial revenue, Founder/MD/CEO is likely buyer.
+   - **Pass**: meets every qualification criterion `context.icp()` defines (e.g. size band, revenue type, buyer persona, geography/reachability — whatever that org's ICP specifies), with no disqualifiers present.
    - **Soft pass**: matches most criteria, one signal missing or unverifiable — flag for manual review.
    - **Fail**: disqualifiers present (government-funded, public sector clients, no decision authority, outside the ICP's geography/reachability criteria) — exclude.
    - Add column `icp_score`: `pass` / `soft_pass` / `fail`.
