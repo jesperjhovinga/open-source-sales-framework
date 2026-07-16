@@ -1,10 +1,11 @@
 import io
+import os
 import urllib.parse
 from typing import NamedTuple
 
 import pytest
 
-from bdcore.ledger import APPROVED, REJECTED, append, read_all, record, word_edit_rate
+from bdcore.ledger import APPROVED, REJECTED, append, ledger_path, read_all, record, word_edit_rate
 from bdcore.review import ARTIFACT_DIRS, ReviewError, _handler, pending, render
 
 
@@ -75,6 +76,18 @@ def test_a_redraft_with_a_new_seq_id_is_pending_again(repo):
     assert [p.run for p in pending(repo)] == ["acme-jane-002"]
 
 
+def test_c2_originals_subdir_is_invisible_to_pending(repo):
+    # The outreach skill freezes the first-generated draft at
+    # contexts/<org>/outreach/originals/<stem>.md so it survives pre-approval
+    # revisions to the live <stem>.md. pending()'s glob is non-recursive, so
+    # that baseline copy must never itself surface as a second pending run.
+    draft(repo, "acme-jane-001")
+    originals_dir = repo / "contexts" / "acme" / "outreach" / "originals"
+    originals_dir.mkdir()
+    (originals_dir / "acme-jane-001.md").write_text("Hi Jane, original draft.", encoding="utf-8")
+    assert [p.run for p in pending(repo)] == ["acme-jane-001"]
+
+
 def test_pending_carries_the_draft_text(repo):
     draft(repo, "acme-jane-001", body="Hi Jane, specific hook.")
     assert pending(repo)[0].text == "Hi Jane, specific hook."
@@ -134,6 +147,31 @@ def test_approve_with_edit_writes_the_edited_text_and_logs_one_row(repo):
     assert rows[0].run == "acme-jane-001"
     assert rows[0].outcome == APPROVED
     assert rows[0].edit_rate == pytest.approx(word_edit_rate("Hi Jane, original draft.", edited))
+
+
+@pytest.mark.skipif(os.geteuid() == 0, reason="root bypasses file permission checks")
+def test_c1_a_failed_ledger_append_leaves_the_artifact_untouched(repo):
+    # If the artifact were written before the ledger row, a failed append (an
+    # unwritable ledger, here forced with chmod 444) would leave the draft
+    # overwritten with the edited text but no decision logged — the operator
+    # re-approves, and the run then logs a 0.0 edit rate for what was really a
+    # heavy edit. Appending first means a failed write only ever leaves the
+    # ARTIFACT stale, never the ledger's evidence.
+    original = "Hi Jane, original draft."
+    path = draft(repo, "acme-jane-001", body=original)
+    edited = "Hi Jane, a much shorter pitch — heavily rewritten."
+
+    ledger = ledger_path(repo)
+    ledger.parent.mkdir(parents=True, exist_ok=True)
+    ledger.touch()
+    ledger.chmod(0o444)
+    try:
+        sent = post(repo, {"run": "acme-jane-001", "spec": "outreach-drafting", "outcome": APPROVED, "after": edited})
+    finally:
+        ledger.chmod(0o644)
+
+    assert sent.status == 400  # the append failed and was surfaced, not swallowed
+    assert path.read_text(encoding="utf-8") == original  # NOT overwritten — append() ran first and failed
 
 
 def test_reject_does_not_overwrite_the_file(repo):

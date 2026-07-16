@@ -1,8 +1,13 @@
 """The approval ledger — the record that makes "earned autonomy" checkable.
 
 Every Draft→Approve decision appends one line here (cross-cutting principle 1).
-It is an audit log (principle 6): append-only, never rewritten, so a poor track
-record cannot be quietly laundered before a graduation check reads it.
+It is an audit log (principle 6): append-only, never rewritten. That alone
+guarantees the file's history, not the graduation check's reading of it — a
+duplicate row on one run id still has to be resolved somehow. `graduation.py`
+resolves it by keeping the EARLIEST decision per run (first-wins), so a later
+row can never supersede an earlier verdict. Together, append-only-ness and
+first-wins mean a poor track record cannot be quietly laundered before a
+graduation check reads it.
 
 Lives at contexts/<org>/ledger/approvals.jsonl — org-specific operational data,
 behind the seam and gitignored, like the artifacts beside it.

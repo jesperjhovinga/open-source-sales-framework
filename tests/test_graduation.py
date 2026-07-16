@@ -179,6 +179,32 @@ def test_major_on_an_unparseable_version_is_a_blocking_error(version):
         major(version)
 
 
+def test_i3_first_wins_a_racing_approval_cannot_launder_a_rejection(repo):
+    # ledger.append's duplicate guard is check-then-act with no lock: two
+    # concurrent `bd log-approval` calls on one run can still both land
+    # (reproduced). With last-wins dedupe, an approval appended moments after a
+    # rejection would silently REPLACE it in the graduation window, even though
+    # the rejection is still physically in the ledger file. First-wins makes
+    # the race benign: whichever row landed first is the one that counts.
+    #
+    # 26 clean approvals + 3 clean rejections + 1 raced run = 30 (the window).
+    # If the raced run counts as rejected (first-wins, correct): 26/30 = 86.7%
+    # approval rate -> NOT_YET. If it counted as approved (last-wins, the bug):
+    # 27/30 = 90.0% exactly -> ELIGIBLE. The two dedupe strategies produce
+    # different verdicts, so this test cannot pass by accident either way.
+    log(repo, 26, outcome=APPROVED, edit_rate=0.0)
+    log(repo, 3, outcome=REJECTED)
+    raw_append(repo, record("raced-run", "outreach-drafting", REJECTED, repo, reason="off-tone"))
+    raw_append(repo, record("raced-run", "outreach-drafting", APPROVED, repo, edit_rate=0.0))
+
+    s = status_for("outreach-drafting", repo)
+
+    assert s.runs == WINDOW  # 26 + 3 + 1 raced-but-distinct run
+    assert s.approval_rate == pytest.approx(26 / 30)  # the raced run counts as REJECTED
+    assert s.verdict == NOT_YET  # would be ELIGIBLE (27/30) if the approval had won the race
+    assert "approval rate" in s.detail
+
+
 def test_thirty_rows_sharing_one_run_id_is_insufficient_not_eligible(repo):
     # The exact gaming scenario Defect 1 exists to prevent: 30 decisions on a
     # single draft must not count as 30 runs. ledger.append blocks this at

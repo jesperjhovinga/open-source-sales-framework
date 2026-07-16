@@ -137,13 +137,17 @@ def _handler(root: Path) -> type[http.server.BaseHTTPRequestHandler]:
                     after=field.get("after") if outcome == APPROVED else None,
                     reason=field.get("reason") or None if outcome == REJECTED else None,
                 )
-                # record() succeeded — the decision is valid. Only now, and only for an
-                # approval, does the artifact get overwritten with what was actually
-                # approved: a rejected draft keeps its original text, and a validation
-                # failure (caught below) never touches the file.
+                # record() succeeded — the decision is valid. Append the ledger row
+                # BEFORE touching the artifact: if the ledger write then fails (e.g. an
+                # unwritable ledger file), the decision — computed here from item.text,
+                # the draft as it stood before this edit — never got recorded, so the
+                # draft must stay pending and unedited for the next attempt. Only once
+                # the row is safely on disk does the artifact get overwritten with what
+                # was actually approved. A rejected draft keeps its original text, and a
+                # validation failure (caught below) never touches either.
+                append(decision, root)
                 if outcome == APPROVED:
                     item.path.write_text(field["after"], encoding="utf-8")
-                append(decision, root)
             except Exception as e:  # surfaced in the page; the ledger stays clean
                 self._send(f"<p>Not logged: {html.escape(str(e))}</p><p><a href='/'>Back</a></p>", status=400)
                 return

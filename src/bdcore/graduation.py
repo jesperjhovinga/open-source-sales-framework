@@ -57,18 +57,28 @@ class Status(NamedTuple):
 
 
 def _distinct_runs(decisions: list[Decision]) -> list[Decision]:
-    """Dedupe by run id, keeping the last decision for each, in last-decided order.
+    """Dedupe by run id, keeping the FIRST decision for each, in first-decided order.
 
     A window of "30 runs" that is really "30 rows" can be filled by 30 duplicate
     decisions on one run id — the exact gaming scenario Decision 1 exists to
     prevent (this is belt-and-braces: `ledger.append` blocks new duplicates at
     write time; this is the read-time defence for a hand-edited or legacy
     ledger that predates that check).
+
+    First-wins, not last-wins: `ledger.append`'s duplicate guard is
+    check-then-act with no lock, so two concurrent `bd log-approval` calls on
+    one run can still both land (reproduced). If the LAST decision won, an
+    approval appended moments after a rejection would silently replace it in
+    the graduation window — laundering a verdict the operator already
+    recorded, even though it is still physically in the ledger file. Keeping
+    the FIRST decision makes the race benign: whichever row landed first is
+    the one that counts, and no later row can ever supersede an earlier
+    verdict on the same run.
     """
     by_run: dict[str, Decision] = {}
     for d in decisions:
-        by_run.pop(d.run, None)  # drop and reinsert so order reflects the LAST decision
-        by_run[d.run] = d
+        if d.run not in by_run:  # first decision for this run wins; later ones are ignored
+            by_run[d.run] = d
     return list(by_run.values())
 
 
