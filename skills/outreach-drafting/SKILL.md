@@ -44,7 +44,12 @@ Write the draft to the OutreachSequence path in `core/path-conventions.md`:
 `contexts/<org>/outreach/<account-slug>-<contact-slug>-<seq-id>.md`.
 
 Use a new `<seq-id>` for every redraft — a rejected draft keeps its record, and a
-new id is what makes the revision show up for review again.
+new id is what makes the revision show up for review again. This includes
+pre-approval iteration: if the BDOwner asks for changes ("make it shorter",
+"different hook") before approving, write each revision to a **new** seq-id
+file rather than overwriting the one you already drafted. The original file is
+what `--before` names below; overwrite it and there is no original left to diff
+against, so a materially edited draft would log as a 0% edit.
 
 Show the draft in the conversation too. The BDOwner approves, edits, or rejects.
 
@@ -55,6 +60,16 @@ earns a higher autonomy zone (`docs/decisions.md` Decision 1), so **every**
 decision gets logged — the rejections most of all. A ledger with only the wins in
 it would graduate a workflow that has not earned it.
 
+**A self-reported edit rate flatters the gate that decides whether this workflow
+stops being reviewed.** `--before`/`--after` compute the rate from the actual
+text; `--edit-rate` is a number you assert. Prefer the computed form whenever
+both texts exist.
+
+- `--before` is **the draft as first generated** — the file from the Output step
+  above, never overwritten by later iteration.
+- `--after` is the text that was actually approved — the last revision the
+  BDOwner signed off on, edited or not.
+
 The id `bd log-approval` takes is the draft's full filename with `.md` dropped —
 `<account-slug>-<contact-slug>-<seq-id>` — not the bare `<seq-id>`. `bd review`'s
 dashboard matches ledger entries to drafts by that whole stem; log the bare
@@ -63,11 +78,14 @@ decided.
 
 When the BDOwner responds, immediately run:
 
-- Approved unchanged:
-  `bd log-approval <account-slug>-<contact-slug>-<seq-id> --spec outreach-drafting --outcome approved --edit-rate 0`
-- Approved with edits — write their edited text to a file first, then:
-  `bd log-approval <account-slug>-<contact-slug>-<seq-id> --spec outreach-drafting --outcome approved --before <draft.md> --after <edited.md>`
+- Approved (unchanged or after pre-approval revisions) — `--before` is the
+  first draft you wrote, `--after` is the one actually approved, so the rate is
+  computed even when nothing changed at the moment of approval:
+  `bd log-approval <account-slug>-<contact-slug>-<seq-id> --spec outreach-drafting --outcome approved --before <original-draft.md> --after <approved-draft.md>`
 - Rejected:
   `bd log-approval <account-slug>-<contact-slug>-<seq-id> --spec outreach-drafting --outcome rejected --reason "<their reason>"`
+- `--edit-rate <n>` is for the rare case where the edit happened outside this
+  loop and neither the original nor the approved text is available as a file to
+  diff — not a shortcut for "nothing changed that I noticed."
 
 Do not ask permission to log. Do not skip it because the answer was "no".
