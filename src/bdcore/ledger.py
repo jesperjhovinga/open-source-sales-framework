@@ -115,7 +115,19 @@ def record(
 
 
 def append(decision: Decision, root: Path | None = None) -> None:
-    """Append one decision. Never rewrites — this is an audit log."""
+    """Append one decision. Never rewrites — this is an audit log.
+
+    One row = one decision (see the design doc): a run that already has a
+    decision logged against it cannot get a second one. Validated by reading
+    the existing ledger first — the write itself still only ever appends.
+    """
+    for existing in read_all(root):
+        if existing.spec == decision.spec and existing.run == decision.run:
+            raise LedgerError(
+                f"run {decision.run!r} of spec {decision.spec!r} was already decided — "
+                "a redraft needs a new seq-id, not a second decision on the same run"
+            )
+
     path = ledger_path(root)
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("a", encoding="utf-8") as f:

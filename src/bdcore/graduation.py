@@ -11,12 +11,13 @@ Aggregation note: Decision 1 does not say how to aggregate the edit rate. This
 uses the mean, the plain reading — see the design doc for its known blind spot.
 """
 
+import re
 from pathlib import Path
 from typing import NamedTuple
 
 from bdcore.context import find_root
 from bdcore.ledger import APPROVED, Decision, read_all
-from bdcore.specs import DRAFT_APPROVE, all_specs, load_spec
+from bdcore.specs import DRAFT_APPROVE, SpecError, all_specs, load_spec
 
 WINDOW = 30
 MIN_APPROVAL_RATE = 0.90
@@ -26,6 +27,23 @@ ELIGIBLE = "eligible"
 NOT_YET = "not yet"
 INSUFFICIENT = "insufficient data"
 NOT_APPLICABLE = "not applicable"
+
+_VERSION = re.compile(r"^v(\d+)(?:\.\d+){0,2}$")
+
+
+def major(version: str) -> str:
+    """The MAJOR component of a `vMAJOR[.MINOR[.PATCH]]` spec version.
+
+    Decision 10 (v0.2 amendment): MAJOR bumps are behavioural — process,
+    acceptance criteria, or output shape changed — and reset a workflow's
+    graduation track record. MINOR bumps are editorial only, so evidence
+    carries over. A version this cannot parse is a blocking error, never a
+    silent pass (cross-cutting principle 5).
+    """
+    match = _VERSION.match(version)
+    if not match:
+        raise SpecError(f"spec version {version!r} is not a parseable vMAJOR[.MINOR[.PATCH]] version")
+    return f"v{match.group(1)}"
 
 
 class Status(NamedTuple):
@@ -38,14 +56,32 @@ class Status(NamedTuple):
     detail: str
 
 
-def _window_for(decisions: list[Decision], spec_id: str, version: str) -> list[Decision]:
-    """The last WINDOW runs of this spec *at this version*.
+def _distinct_runs(decisions: list[Decision]) -> list[Decision]:
+    """Dedupe by run id, keeping the last decision for each, in last-decided order.
 
-    A version bump makes it a materially different workflow, so its predecessor's
-    track record does not carry over (see docs/decisions.md).
+    A window of "30 runs" that is really "30 rows" can be filled by 30 duplicate
+    decisions on one run id — the exact gaming scenario Decision 1 exists to
+    prevent (this is belt-and-braces: `ledger.append` blocks new duplicates at
+    write time; this is the read-time defence for a hand-edited or legacy
+    ledger that predates that check).
     """
-    matching = [d for d in decisions if d.spec == spec_id and d.spec_version == version]
-    return matching[-WINDOW:]
+    by_run: dict[str, Decision] = {}
+    for d in decisions:
+        by_run.pop(d.run, None)  # drop and reinsert so order reflects the LAST decision
+        by_run[d.run] = d
+    return list(by_run.values())
+
+
+def _window_for(decisions: list[Decision], spec_id: str, version_major: str) -> list[Decision]:
+    """The last WINDOW *distinct runs* of this spec at this MAJOR version.
+
+    A MAJOR version bump makes it a materially different workflow, so its
+    predecessor's track record does not carry over. A MINOR bump is editorial
+    only and does not reset the window (see docs/decisions.md, Decision 10 and
+    Decision 11, v0.2 amendments).
+    """
+    matching = [d for d in decisions if d.spec == spec_id and major(d.spec_version) == version_major]
+    return _distinct_runs(matching)[-WINDOW:]
 
 
 def status_for(spec_id: str, root: Path | None = None) -> Status:
@@ -67,7 +103,7 @@ def status_for(spec_id: str, root: Path | None = None) -> Status:
             detail=f"zone is {spec.zone}, not {DRAFT_APPROVE} — graduation does not apply",
         )
 
-    window = _window_for(read_all(root), spec_id, spec.version)
+    window = _window_for(read_all(root), spec_id, major(spec.version))
 
     if len(window) < WINDOW:
         return Status(

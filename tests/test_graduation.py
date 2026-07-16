@@ -1,3 +1,5 @@
+import json
+
 import pytest
 
 from bdcore.graduation import (
@@ -6,9 +8,11 @@ from bdcore.graduation import (
     NOT_APPLICABLE,
     NOT_YET,
     WINDOW,
+    major,
     status_for,
 )
-from bdcore.ledger import APPROVED, REJECTED, append, record
+from bdcore.ledger import APPROVED, REJECTED, append, ledger_path, record
+from bdcore.specs import SpecError
 
 
 @pytest.fixture
@@ -36,6 +40,19 @@ def log(repo, n, outcome=APPROVED, edit_rate=0.0, version="v0.1"):
             append(record(run_id, "outreach-drafting", outcome, repo, reason="no"), repo)
         else:
             append(record(run_id, "outreach-drafting", outcome, repo, edit_rate=edit_rate), repo)
+
+
+def raw_append(repo, decision):
+    """Write a decision straight to the ledger file, bypassing append()'s duplicate guard.
+
+    Simulates a hand-edited or legacy ledger that predates that guard — the
+    scenario `_distinct_runs` (the read-time half of the Defect 1 fix) defends
+    against.
+    """
+    path = ledger_path(repo)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a", encoding="utf-8") as f:
+        f.write(json.dumps(decision._asdict()) + "\n")
 
 
 def test_no_runs_is_insufficient(repo):
@@ -116,10 +133,59 @@ def test_a_spec_above_draft_approve_is_not_applicable(repo):
     assert "Autonomous" in s.detail
 
 
-def test_a_version_bump_resets_the_window(repo):
-    log(repo, WINDOW, version="v0.1")  # a clean v0.1 record
-    log(repo, 1, version="v0.2")  # v0.2 has one run
+def test_a_major_version_bump_resets_the_window(repo):
+    log(repo, WINDOW, version="v0.9")  # a clean v0.9 record
+    log(repo, 1, version="v1.0")  # v1.0 is a behavioural change — one run so far
+    s = status_for("outreach-drafting", repo)
+    assert s.spec_version == "v1.0"
+    assert s.runs == 1  # v0.9's history does not carry over
+    assert s.verdict == INSUFFICIENT
+
+
+def test_a_minor_version_bump_carries_the_window(repo):
+    log(repo, WINDOW - 5, version="v0.1")  # a clean v0.1 record, partway there
+    log(repo, 5, version="v0.2")  # editorial bump — same MAJOR, evidence carries
     s = status_for("outreach-drafting", repo)
     assert s.spec_version == "v0.2"
-    assert s.runs == 1  # v0.1's history does not carry over
+    assert s.runs == WINDOW  # v0.1's 25 runs still count
+    assert s.verdict == ELIGIBLE
+
+
+def test_an_unparseable_spec_version_is_a_blocking_error(repo):
+    (repo / "specs" / "outreach-drafting.spec.md").write_text(
+        "**ID**: `outreach-drafting`\n**Version**: `not-a-version`\n**Rep-risk zone**: Draft→Approve\n",
+        encoding="utf-8",
+    )
+    with pytest.raises(SpecError, match="not a parseable"):
+        status_for("outreach-drafting", repo)
+
+
+@pytest.mark.parametrize(
+    ("version", "expected"),
+    [
+        ("v0.1", "v0"),
+        ("v1.0", "v1"),
+        ("v0.1.2", "v0"),
+        ("v1", "v1"),
+    ],
+)
+def test_major_parses_the_major_component(version, expected):
+    assert major(version) == expected
+
+
+@pytest.mark.parametrize("version", ["0.1", "v", "vX.1", "1.0", ""])
+def test_major_on_an_unparseable_version_is_a_blocking_error(version):
+    with pytest.raises(SpecError, match="not a parseable"):
+        major(version)
+
+
+def test_thirty_rows_sharing_one_run_id_is_insufficient_not_eligible(repo):
+    # The exact gaming scenario Defect 1 exists to prevent: 30 decisions on a
+    # single draft must not count as 30 runs. ledger.append blocks this at
+    # write time (see test_ledger.py); this proves the read-time defence
+    # (_distinct_runs) holds even against a ledger that predates that guard.
+    for _ in range(WINDOW):
+        raw_append(repo, record("same-run", "outreach-drafting", APPROVED, repo, edit_rate=0.0))
+    s = status_for("outreach-drafting", repo)
+    assert s.runs == 1
     assert s.verdict == INSUFFICIENT

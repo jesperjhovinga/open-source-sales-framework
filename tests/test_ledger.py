@@ -115,6 +115,31 @@ def test_append_is_append_only(repo):
     assert [d.run for d in read_all(repo)] == ["r1", "r2"]
 
 
+def test_append_rejects_a_duplicate_run_for_the_same_spec(repo):
+    # "One row = one decision" (design doc): a redraft needs a new seq-id, not
+    # a second decision on the same run — this is the write-time half of the
+    # defence against a duplicated run id filling the graduation window.
+    append(record("r1", "outreach-drafting", APPROVED, repo, edit_rate=0.0), repo)
+    second = record("r1", "outreach-drafting", REJECTED, repo, reason="no")
+    with pytest.raises(LedgerError, match="already decided") as exc_info:
+        append(second, repo)
+    assert "new seq-id" in str(exc_info.value)
+
+
+def test_append_allows_the_same_run_id_under_a_different_spec(repo):
+    # Two different workflows sharing a run id are two different runs.
+    (repo / "specs" / "discovery-call-prep.spec.md").write_text(
+        "**ID**: `discovery-call-prep`\n**Version**: `v0.1`\n**Rep-risk zone**: Draft→Approve\n",
+        encoding="utf-8",
+    )
+    append(record("r1", "outreach-drafting", APPROVED, repo, edit_rate=0.0), repo)
+    append(record("r1", "discovery-call-prep", APPROVED, repo, edit_rate=0.0), repo)
+    assert [(d.spec, d.run) for d in read_all(repo)] == [
+        ("outreach-drafting", "r1"),
+        ("discovery-call-prep", "r1"),
+    ]
+
+
 def test_read_all_on_a_missing_ledger_is_empty(repo):
     assert read_all(repo) == []
 
