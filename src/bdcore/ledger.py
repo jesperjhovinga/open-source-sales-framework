@@ -26,6 +26,50 @@ APPROVED = "approved"
 REJECTED = "rejected"
 OUTCOMES = (APPROVED, REJECTED)
 
+# Unicode blocks for scripts conventionally written without spaces between
+# words. A word-edit-rate that tokenizes these on whitespace collapses an
+# entire sentence into one token, so any edit at all scores 100% — see
+# word_edit_rate's docstring. Deliberately narrow: Hangul is excluded because
+# Korean *does* delimit words with spaces (whitespace-splitting already gives
+# the right unit there), and scripts outside this list simply fall back to
+# whitespace splitting, same as before this fix.
+_UNSPACED_SCRIPT_RANGES = (
+    (0x3040, 0x309F),  # Hiragana
+    (0x30A0, 0x30FF),  # Katakana
+    (0x3400, 0x4DBF),  # CJK Unified Ideographs Extension A
+    (0x4E00, 0x9FFF),  # CJK Unified Ideographs
+    (0xF900, 0xFAFF),  # CJK Compatibility Ideographs
+    (0x0E00, 0x0E7F),  # Thai
+)
+
+
+def _is_unspaced_script(ch: str) -> bool:
+    cp = ord(ch)
+    return any(lo <= cp <= hi for lo, hi in _UNSPACED_SCRIPT_RANGES)
+
+
+def _tokenize(text: str) -> list[str]:
+    """Split into comparison units: whitespace-delimited words for
+    space-delimited scripts, one token per character for scripts that don't
+    use spaces (CJK, Thai) — so the unit of change matches the writing
+    system. A run of non-CJK characters (e.g. an embedded English product
+    name or URL inside Japanese text) is still whitespace-split, so it stays
+    one token unless it contains internal whitespace.
+    """
+    tokens: list[str] = []
+    buf: list[str] = []
+    for ch in text:
+        if _is_unspaced_script(ch):
+            if buf:
+                tokens.extend("".join(buf).split())
+                buf = []
+            tokens.append(ch)
+        else:
+            buf.append(ch)
+    if buf:
+        tokens.extend("".join(buf).split())
+    return tokens
+
 
 class LedgerError(Exception):
     """The ledger could not be written or read. Always a blocking error."""
@@ -47,8 +91,14 @@ def word_edit_rate(before: str, after: str) -> float:
 
     Whitespace-normalized, so a reflow is not an edit. Measured against the
     original's length: rewriting every word is 1.0 however long the result.
+
+    Tokenizes per script (see `_tokenize`), not just on whitespace: a
+    language written without spaces (Japanese, Chinese, Thai) would otherwise
+    collapse to a single token, so any edit at all — even one character —
+    would score 100%, making Decision 1's <10% graduation bar unreachable by
+    construction for those languages.
     """
-    old, new = before.split(), after.split()
+    old, new = _tokenize(before), _tokenize(after)
     if not old and not new:
         return 0.0
     matcher = difflib.SequenceMatcher(a=old, b=new, autojunk=False)

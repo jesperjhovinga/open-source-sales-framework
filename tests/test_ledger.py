@@ -46,6 +46,67 @@ def test_word_edit_rate_ignores_whitespace_reflow():
     assert word_edit_rate("one two  three", "one\ntwo three") == 0.0
 
 
+# Whitespace-only tokenization (str.split()) collapses an entire unspaced-script
+# sentence (Japanese, Chinese, Thai — no spaces between words) into a single
+# token, so any edit at all scores 100%, making Decision 1's <10% graduation bar
+# unreachable by construction for those languages. word_edit_rate tokenizes per
+# script instead: whitespace-delimited words where the text is space-delimited,
+# individual characters where it is not.
+
+
+def test_word_edit_rate_japanese_one_character_edit_is_single_digits():
+    # 40 characters, one character changed (光栄 -> 幸甚, both "honored/grateful")
+    # — the same kind of one-word swap as the English parametrized cases above.
+    before = "先週はお時間をいただき、貴社のオンボーディング体制についてお話しできて光栄でした"
+    after = "先週はお時間をいただき、貴社のオンボーディング体制についてお話しできて幸甚でした"
+    rate = word_edit_rate(before, after)
+    assert rate == pytest.approx(2 / 40)
+    assert rate < 0.10  # must not be 1.0 (the whitespace-split bug) or unreachable vs. Decision 1's bar
+
+
+def test_word_edit_rate_chinese_one_word_edit_is_single_digits():
+    before = "感谢您上周抽出时间与我们讨论贵公司的新员工入职流程"
+    after = "感谢您上周抽出时间与我们讨论贵公司的新员工入职方案"
+    rate = word_edit_rate(before, after)
+    assert rate == pytest.approx(2 / 25)
+    assert rate < 0.10
+
+
+def test_word_edit_rate_mixed_script_treats_embedded_latin_run_as_one_token():
+    # Japanese sentence with an embedded English product name and a URL, neither
+    # surrounded by whitespace — realistic mixed-script BD copy.
+    before = "先週はPayPalの導入についてご相談させていただきました。詳細はhttps://example.com/docsをご覧ください。"
+    after = "先週はStripeの導入についてご相談させていただきました。詳細はhttps://example.com/docsをご覧ください。"
+    rate = word_edit_rate(before, after)
+    assert 0.0 < rate < 0.10  # one swapped product name among ~37 tokens, not a full rewrite
+
+
+def test_word_edit_rate_thai_one_character_edit_is_single_digits():
+    before = "สวัสดีครับ ขอบคุณที่สละเวลาคุยกับเราเมื่อสัปดาห์ที่แล้วเรื่องขั้นตอนการเริ่มงาน"
+    after = "สวัสดีครับ ขอบคุณที่สละเวลาคุยกับเราเมื่อสัปดาห์ที่แล้วเรื่องขั้นตอนการเริ่มต้น"
+    rate = word_edit_rate(before, after)
+    assert rate == pytest.approx(2 / 78)
+    assert rate < 0.10
+
+
+def test_word_edit_rate_ignores_whitespace_reflow_in_unspaced_script():
+    assert word_edit_rate("先週  お話し", "先週\nお話し") == 0.0
+
+
+@pytest.mark.parametrize(
+    ("before", "after", "expected"),
+    [
+        # German — space-delimited, must behave exactly like the English cases above.
+        ("eins zwei drei vier", "eins zwei drei VIER", 0.25),
+        ("eins zwei", "", 1.0),
+        # Dutch
+        ("een twee drie vier", "een twee drie VIER", 0.25),
+    ],
+)
+def test_word_edit_rate_space_delimited_non_english_languages_behave_like_english(before, after, expected):
+    assert word_edit_rate(before, after) == pytest.approx(expected)
+
+
 def test_ledger_path_is_behind_the_seam(repo):
     assert ledger_path(repo) == repo / "contexts" / "acme" / "ledger" / "approvals.jsonl"
 

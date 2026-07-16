@@ -171,6 +171,30 @@ total rewrite average to ~3% and pass the gate. Recorded here so the choice is v
 if it bites, a percentile gate is the fix, and the raw per-run rates are in the ledger
 to recompute against.
 
+**`word_edit_rate` tokenized on whitespace only, which made the bar unreachable for
+some languages — fixed, but the fix opens a question this design doesn't close.**
+`str.split()` treats a language written without spaces between words (Japanese,
+Chinese, Thai) as a single token, so *any* edit — one character in a 40-character
+message — scored 100%. Decision 1's <10% bar was mathematically unreachable for those
+languages, directly contradicting `core/context-contract.md`'s "language is an org
+value — skills never assume one." The fix tokenizes per script: whitespace-delimited
+words where the text is space-delimited, one token per character for scripts in the
+CJK/Thai Unicode ranges that aren't (stdlib only — codepoint-range checks, no
+dependency). A one-character edit in Japanese now scores single digits, matching the
+same edit's English score, instead of always failing.
+
+That fix makes the metric *not catastrophically wrong* — it does not make it
+*comparable*. A "10% edit rate" now means "10% of characters changed" in Japanese and
+"10% of words changed" in English, and a character is not a word: one word edited in a
+five-word English sentence and one character edited in a five-character Japanese
+sentence are not obviously the same amount of correction, so whether Decision 1's
+single global <10% bar means the same thing across languages is genuinely open, not
+settled by this fix. Left for the framework's author: a per-language bar, a different
+unit (e.g. edit operations over a normalized token count), or a case that the current
+approximation is close enough in practice. Not decided here — the raw per-run rates are in the ledger, so this is a recomputation
+away if it bites; the ledger does not currently record which tokenization a rate was
+computed under, which would itself need adding if a per-language bar is later chosen.
+
 **Two different edit-rate thresholds exist and must not be confused:**
 
 | Threshold | Source | Meaning |
