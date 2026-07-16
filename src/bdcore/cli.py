@@ -114,7 +114,7 @@ def log_approval(
             reason=reason,
         )
         ledger.append(decision, root)
-    except (LedgerError, SpecError, ContextError) as e:
+    except (LedgerError, SpecError, ContextError, OSError) as e:
         typer.secho(f"ERROR: {e}", fg=typer.colors.RED, err=True)
         raise typer.Exit(1) from e
 
@@ -133,7 +133,7 @@ def graduation_status(
     root = _root()
     try:
         statuses = [graduation.status_for(spec, root)] if spec else graduation.all_statuses(root)
-    except (LedgerError, SpecError, ContextError) as e:
+    except (LedgerError, SpecError, ContextError, OSError) as e:
         typer.secho(f"ERROR: {e}", fg=typer.colors.RED, err=True)
         raise typer.Exit(1) from e
 

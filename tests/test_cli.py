@@ -1,8 +1,10 @@
+import os
+
 import pytest
 from typer.testing import CliRunner
 
 from bdcore.cli import app
-from bdcore.ledger import read_all
+from bdcore.ledger import append, ledger_path, read_all, record
 
 runner = CliRunner()
 
@@ -82,3 +84,54 @@ def test_graduation_status_reports_insufficient_data(repo):
     assert result.exit_code == 0
     assert "insufficient data" in result.output
     assert "0/30" in result.output
+
+
+def test_graduation_status_eligible_shows_disclaimer(repo):
+    for i in range(30):
+        append(record(f"r{i}", "outreach-drafting", "approved", repo, edit_rate=0.0), repo)
+    result = runner.invoke(app, ["graduation-status", "outreach-drafting"])
+    assert result.exit_code == 0
+    assert "eligible" in result.output
+    assert "Graduation is reported, never applied. A human promotes the zone." in result.output
+
+
+def test_graduation_status_not_yet_shows_disclaimer(repo):
+    for i in range(30):
+        append(record(f"r{i}", "outreach-drafting", "approved", repo, edit_rate=0.2), repo)
+    result = runner.invoke(app, ["graduation-status", "outreach-drafting"])
+    assert result.exit_code == 0
+    assert "not yet" in result.output
+    assert "Graduation is reported, never applied. A human promotes the zone." in result.output
+
+
+@pytest.mark.skipif(os.geteuid() == 0, reason="root ignores file permissions; chmod 000 would not block reads")
+def test_log_approval_unreadable_ledger_fails_cleanly(repo):
+    path = ledger_path(repo)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("", encoding="utf-8")
+    path.chmod(0o000)
+    try:
+        result = runner.invoke(
+            app,
+            ["log-approval", "r1", "--spec", "outreach-drafting", "--outcome", "approved", "--edit-rate", "0.1"],
+        )
+    finally:
+        path.chmod(0o644)
+    assert result.exit_code == 1
+    assert "ERROR" in result.output
+    assert "Traceback" not in result.output
+
+
+@pytest.mark.skipif(os.geteuid() == 0, reason="root ignores file permissions; chmod 000 would not block reads")
+def test_graduation_status_unreadable_ledger_fails_cleanly(repo):
+    path = ledger_path(repo)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("", encoding="utf-8")
+    path.chmod(0o000)
+    try:
+        result = runner.invoke(app, ["graduation-status", "outreach-drafting"])
+    finally:
+        path.chmod(0o644)
+    assert result.exit_code == 1
+    assert "ERROR" in result.output
+    assert "Traceback" not in result.output
