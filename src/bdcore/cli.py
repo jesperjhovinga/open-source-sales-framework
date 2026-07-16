@@ -85,7 +85,7 @@ def context() -> None:
 
 @app.command("log-approval")
 def log_approval(
-    run: Annotated[str, typer.Argument(help="Run label, e.g. the draft's seq-id.")],
+    run: Annotated[str, typer.Argument(help="Run id — the draft's filename without .md, not the bare seq-id.")],
     spec: Annotated[str, typer.Option("--spec", help="Spec id this run implements.")],
     outcome: Annotated[str, typer.Option("--outcome", help="approved or rejected.")],
     before: Annotated[Path | None, typer.Option("--before", help="Draft as generated.")] = None,
