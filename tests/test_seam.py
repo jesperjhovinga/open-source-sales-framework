@@ -14,7 +14,7 @@ from bdcore import seam
 def core(tmp_path):
     (tmp_path / "ACTIVE_CONTEXT.md").write_text("acme\n", encoding="utf-8")
     for d in seam.BD_CORE_DIRS:
-        (tmp_path / d).mkdir()
+        (tmp_path / d).mkdir(parents=True)
     return tmp_path
 
 
@@ -50,6 +50,17 @@ def test_residue_on_a_contract_call_line_is_still_caught(core):
         'Draft via `context.tone("email")`; for ExampleOrg default to Dutch.\n', encoding="utf-8"
     )
     assert sorted(v.rule.name for v in seam.check(core)) == ["named-language", "org-name"]
+
+
+def test_src_bdcore_is_scanned():
+    assert "src/bdcore" in seam.BD_CORE_DIRS
+
+
+def test_a_genuine_violation_in_src_bdcore_is_still_caught(core):
+    # The allowlist exempts seam.py by exact file path, not the whole src/bdcore/
+    # directory — a violation in a sibling module must still be caught.
+    (core / "src" / "bdcore" / "other.py").write_text('greeting = "Default to Dutch."\n', encoding="utf-8")
+    assert [v.rule.name for v in seam.check(core)] == ["named-language"]
 
 
 def test_allowlist_reaches_nested_files(core):

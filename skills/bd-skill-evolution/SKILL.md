@@ -1,7 +1,7 @@
 ---
 name: bd-skill-evolution
 version: "0.1.0"
-description: After completing a BD task, detect generalizable learnings and propose updates to the BD framework — context files, specs, or skills. Always active; applies to every interaction. Trigger especially when the BDOwner corrects a draft's facts or voice, when an outreach/CallNote/prep needed heavy rework, when he says "for future reference" or "next time", when a prospect's fit was wrong, or when you discover an undocumented preference or convention. Adapted from NVIDIA's cuopt-skill-evolution for the BD Automation Framework.
+description: After completing a BD task, detect generalizable learnings and propose updates to the BD framework — context files, specs, or skills. Always active; applies to every interaction. Trigger especially when the BDOwner corrects a draft's facts or voice, when an outreach/CallNote/prep needed heavy rework, when they say "for future reference" or "next time", when a prospect's fit was wrong, or when you discover an undocumented preference or convention. Adapted from NVIDIA's cuopt-skill-evolution for the BD Automation Framework.
 origin: cuopt-skill-evolution (NVIDIA/skills), adapted for BD
 ---
 
@@ -16,9 +16,9 @@ This is the meta-skill that turns one-off corrections into durable improvements.
 Evaluate whether to enter the workflow when any of these happen during a conversation:
 
 1. **Correction of facts** — the BDOwner corrects something you asserted ("ProspectCo isn't a customer of that client", "it's correct-name not wrong-name"). A correction means the context or skill that guided you was wrong or missing.
-2. **Correction of voice** — he rewrites a draft to sound more like him, or trims it hard. The gap between your draft and his rewrite is a tone-of-voice learning.
+2. **Correction of voice** — they rewrite a draft to sound more like them, or trim it hard. The gap between your draft and their rewrite is a tone-of-voice learning.
 3. **Heavy rework before landing** — an outreach email, CallNote, or prep doc took several revision rounds, or you wrote then deleted whole sections. The final output is fine, but the path shows the skill didn't point you at the right pattern from the start. The fix is usually a worked example or a "prefer X over Y" note.
-4. **"For future reference" / "next time"** — the BDOwner states a rule explicitly ("design agencies under 15 people aren't a fit", "I always format subjects as `[functie] onderwerp`"). This is the highest-value, lowest-ambiguity trigger — capture it.
+4. **"For future reference" / "next time"** — the BDOwner states a rule explicitly ("design agencies under 15 people aren't a fit", "I always format subjects as `[role] [subject]`"). This is the highest-value, lowest-ambiguity trigger — capture it.
 5. **Wrong fit / scoring miss** — a prospect you scored pass/fail was re-judged by the BDOwner, revealing an ICP or disqualification rule that should be encoded.
 6. **Undocumented behavior or convention** — you discover a preference, a path convention, or a connector quirk not written down anywhere.
 
@@ -60,14 +60,14 @@ When a learning holds, distill it into the framework. Match the writing style al
 
 ## Placement rule — target the single highest-impact home
 
-Put the learning where it has the widest effect, and don't duplicate it. This repo's bounded-context split (`STATE.md`) decides the target:
+Put the learning where it has the widest effect, and don't duplicate it. This repo's bounded-context split (`docs/architecture.md`) decides the target:
 
 1. **Org Context file** (`contexts/<org>/`) — if the learning is about *who to target*, *how the BDOwner sounds*, *positioning*, or *sourcing lessons*, it goes in the `context.icp`, `context.tone`, or `context.positioning` surface of the active org (files resolved per `core/path-conventions.md`), or the org's sourcing-method notes (org-local; not yet a contract surface). Resolve `context.*` surfaces per `core/path-conventions.md` against the org named in `ACTIVE_CONTEXT.md`. A missing surface file or one marked `STATUS: UNFILLED` is a blocking error — stop and tell the BDOwner; never guess. Highest impact, because every skill reads these via the context contract. Most BD learnings land here. Keep HOW (phrasing → `context.tone`) separate from WHAT (value/sectors/propositions → `context.positioning`).
 2. **A spec** (`specs/<id>.spec.md`) — if it changes the *shape* of a workflow (acceptance criteria, process steps), update the spec, since the spec is the contract.
-3. **A specific skill** (`skills/<name>/SKILL.md`) — if it's about executing one workflow: `bd-email`, `call-notes-to-crm`, `event-invite`, `cold-call-prep`, `account-research`, `prospect-sourcing`.
+3. **A specific skill** (`skills/<name>/SKILL.md`) — if it's about executing one workflow: `outreach-drafting`, `call-notes-to-crm`, `cold-call-prep`, `account-research`, `prospect-sourcing`.
 4. **A new skill** — only if it fits nowhere above.
 
-If a learning would touch both a context file and a skill, prefer the context file — the skill already consumes it, so you avoid duplication and drift. Keep `core/` (the portable BD Core) free of any org-specific learning; that separation is non-negotiable per `STATE.md`.
+If a learning would touch both a context file and a skill, prefer the context file — the skill already consumes it, so you avoid duplication and drift. Keep `core/` (the portable BD Core) free of any org-specific learning; that separation is non-negotiable per `docs/architecture.md`.
 
 ## Proposal format
 
@@ -83,14 +83,14 @@ Skill update proposal:
   Diff:    <the exact lines to add, remove, or modify>
 ```
 
-Apply only after the BDOwner approves. If he declines, do not persist. `Removal: yes` requires an explicit "yes" — silence is not approval.
+Apply only after the BDOwner approves. If they decline, do not persist. `Removal: yes` requires an explicit "yes" — silence is not approval.
 
 ## Provenance
 
 Learnings need a traceable origin so they're auditable later — the BDOwner's framework already runs on this discipline.
 
 - **Edits to an existing context file / spec / skill:** do not wrap content in HTML comment markers — the noise compounds and `git blame` already attributes every line. Make the audit trail the commit subject: start it with `bd-skill-evolution:` so it's greppable (e.g. `bd-skill-evolution: add <15-employee disqualifier to icp.md`).
-- **Decisions that change a default or rule:** add or update a dated entry in `docs/decisions.md` (the existing Q / Decision / Why / Revisit-when format), and bump the relevant line in `STATE.md` if it changes project status.
+- **Decisions that change a default or rule:** add or update a dated entry in `docs/decisions.md` (the existing Q / Decision / Why / Revisit-when format), and update the relevant line in `docs/roadmap.md` if it changes project status.
 - **A brand-new skill:** add `origin: bd-skill-evolution` to its frontmatter.
 
 ## Security & scope (non-negotiable)

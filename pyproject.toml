@@ -35,6 +35,9 @@ dev = [
   "ty",
   "pytest",
   "pytest-cov",
+  # Skill frontmatter must be checked with a real YAML parser — the bug it caught
+  # (a colon-space in an unquoted scalar) is invisible to naive key: value parsing.
+  "pyyaml",
 ]
 
 [build-system]

@@ -1,0 +1,12 @@
+{
+  "name": "open-source-sales-framework",
+  "description": "An open, portable framework for automating 80-90% of a Business Development workflow with AI agents, under explicit human control rules.",
+  "version": "0.2.0",
+  "author": {
+    "name": "Jesper Hovinga"
+  },
+  "homepage": "https://github.com/jesperjhovinga/open-source-sales-framework",
+  "repository": "https://github.com/jesperjhovinga/open-source-sales-framework",
+  "license": "MIT",
+  "keywords": ["sales", "business-development", "agents", "claude", "spec-driven-development"]
+}

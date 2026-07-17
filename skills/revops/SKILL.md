@@ -133,6 +133,5 @@ An MQL requires both **fit** (ICP match) and **engagement** (buying intent). Nei
 
 ## Related Skills
 
-- **cold-email**: For outbound prospecting emails
-- **email-sequence**: For lifecycle and nurture email flows
+- **outreach-drafting**: For outbound prospecting emails
 - **sales-enablement**: For sales collateral, decks, and objection handling

@@ -33,8 +33,14 @@ For each Org Context at `contexts/<org-slug>/`:
 - `contexts/<org>/dossiers/<account-slug>.md` — AccountDossier.
 - `contexts/<org>/prep/<account-slug>-<meeting-date>.md` — DiscoveryPrepDoc.
 - `contexts/<org>/outreach/<account-slug>-<contact-slug>-<seq-id>.md` — OutreachSequence draft.
+- `contexts/<org>/outreach/originals/<account-slug>-<contact-slug>-<seq-id>.md` — frozen
+  copy of that draft as first generated, written once and never edited again. It is what
+  `bd log-approval --before` names; `bd review`'s pending queue does not look inside this
+  subdirectory, so it never appears as a draft awaiting review.
 - `contexts/<org>/call-notes/<account-slug>-<meeting-date>.md` — CallNote.
 - `contexts/<org>/retrospectives/<deal-slug>.md` — Post-deal retrospective.
+- `contexts/<org>/ledger/approvals.jsonl` — the approval ledger. Append-only; one
+  JSON record per Draft→Approve decision. Consumed by `bd graduation-status`.
 
 ## Spec & skill paths
 

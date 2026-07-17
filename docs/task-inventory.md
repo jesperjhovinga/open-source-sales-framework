@@ -22,7 +22,7 @@ Source: the BDOwner's AI-generated inventory 2026-04-22, refined 2026-04-22.
 | 7 | Follow-up sequences (cold) | weekly | 3 | Draft→Approve |  |
 | 8 | Follow-up after proposal sent | per-deal | 4 | Draft→Approve |  |
 | 9 | Contract / SoW chase | per-deal | 3 | Draft→Approve |  |
-| 10 | Workshop participant outreach + follow-up | ad hoc | 4 | Draft→Approve |  |
+| 10 | Engagement session participant outreach + follow-up | ad hoc | 4 | Draft→Approve |  |
 | 11 | Referral / intro requests | ad hoc | 4 | Draft→Approve |  |
 | 12 | Content / thought leadership (LinkedIn posts) | weekly | 3 | Draft→Approve |  |
 | 13a | Proposal — structure, boilerplate, first pass | per-deal | 3 | Draft→Approve | Split from #13 |
@@ -31,7 +31,7 @@ Source: the BDOwner's AI-generated inventory 2026-04-22, refined 2026-04-22.
 | 15 | Demo / case study prep | per-opp | 5 | Agent supports |  |
 | 16 | Pipeline review | weekly | 2 | Agent supports |  |
 | 17 | Inbound lead qualification | ad hoc | 4 | Agent supports |  |
-| 18 | Workshop / group session prep | ad hoc | 5 | Agent supports |  |
+| 18 | Engagement session prep | ad hoc | 5 | Agent supports |  |
 | 19 | Internal alignment (mgmt, delivery) | weekly | 3 | Human only |  |
 | 20a | Account expansion — opening message | per-opp | 3 | Draft→Approve | Split from #20 |
 | 20b | Account expansion — relationship management | weekly | 2 | Human only | Split from #20 |

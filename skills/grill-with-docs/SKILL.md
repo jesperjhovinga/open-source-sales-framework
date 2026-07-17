@@ -20,13 +20,13 @@ Create these files lazily — only when you have something to write.
 
 ## During the session
 
-**Challenge against the glossary.** When I use a term that conflicts with an existing entry in `CONTEXT.md`, call it out. "Your glossary defines X as Y, but you seem to mean Z — which is it?"
+**Challenge against the glossary.** When I use a term that conflicts with an existing entry in `core/language/glossary.md`, call it out. "Your glossary defines X as Y, but you seem to mean Z — which is it?"
 
 **Sharpen fuzzy language.** When I use vague or overloaded terms, propose a precise canonical term. "You're saying 'account' — do you mean the Customer or the User? Those are different things."
 
 **Discuss concrete scenarios.** When domain relationships are being discussed, stress-test them with specific examples that probe edge cases.
 
-**Update CONTEXT.md inline.** When a term is resolved, update `CONTEXT.md` right there — don't batch these up.
+**Update the glossary inline.** When a term is resolved, update `core/language/glossary.md` right there — don't batch these up.
 
 **Offer ADRs sparingly.** Only offer to create an ADR when all three are true:
 1. Hard to reverse — changing your mind later has real cost

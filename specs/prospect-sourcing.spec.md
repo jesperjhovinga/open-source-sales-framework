@@ -25,7 +25,7 @@ This workflow produces a deduplicated, ICP-filtered, enriched contact list ready
 ## Inputs
 
 ### From BDOwner
-- One LinkedIn profile URL of a target ICP persona (e.g. a founder at a specialist NL firm).
+- One LinkedIn profile URL of a target ICP persona (a person matching the buyer persona defined in `context.icp()`).
 - Number of posts to mine: default 5, minimum 3.
 
 ### From BD Core / Org Context
@@ -44,12 +44,12 @@ This workflow produces a deduplicated, ICP-filtered, enriched contact list ready
 2. **Deduplicate** — Remove duplicate Contacts across posts. A person who engaged on 3 posts appears once. Dedup key: LinkedIn profile URL. Retain all engagement events in a `posts_engaged` column (comma-separated post URLs or titles).
 
 3. **ICP filter** — Score each Contact's organization against `context.icp()`:
-   - **Pass**: specialist firm, NL-based, 15–150 people, commercial revenue, Founder/MD/CEO is likely buyer.
+   - **Pass**: meets every qualification criterion `context.icp()` defines (e.g. size band, revenue type, buyer persona, geography/reachability — whatever that org's ICP specifies), with no disqualifiers present.
    - **Soft pass**: matches most criteria, one signal missing or unverifiable — flag for manual review.
-   - **Fail**: disqualifiers present (government-funded, public sector clients, no decision authority, outside NL) — exclude.
+   - **Fail**: any disqualifier `context.icp()` defines is present, or the account falls outside its geography/reachability criteria — exclude.
    - Add column `icp_score`: `pass` / `soft_pass` / `fail`.
 
-4. **Netherlands filter** — Apply before enrichment to avoid burning Apollo credits on out-of-scope contacts. Exclude contacts where location is clearly non-NL and org is non-NL.
+4. **Geography filter** — Apply before enrichment to avoid burning Apollo credits on out-of-scope contacts. Exclude contacts whose location and org fall outside the geography/reachability criteria in `context.icp()`.
 
 5. **Enrich** — For contacts that pass or soft-pass ICP filter, call Apollo `apollo_enrich_person` to retrieve:
    - Work email
@@ -80,7 +80,7 @@ This workflow produces a deduplicated, ICP-filtered, enriched contact list ready
 | `phone` | Apollo |
 | `location` | Apollo |
 | `icp_score` | Agent (pass / soft_pass / fail) |
-| `icp_notes` | Agent (brief reason — e.g. "no NL signal", "public sector risk") |
+| `icp_notes` | Agent (brief reason — e.g. "geography/reachability mismatch", "public sector risk") |
 | `engagement_type` | Apify (comment / react / share) |
 | `posts_engaged` | Apify (list of post URLs or titles) |
 | `source_profile` | BDOwner input (seed LinkedIn URL) |

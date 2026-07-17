@@ -3,7 +3,7 @@
 Source: architecture review 2026-07-14 (six candidates, verified findings).
 Order chosen for adoption impact: **C1+C3 → C2 → C5 → C4 → C6.**
 
-## C1+C3 — Make the seam real  ✅ partially shipped / 🔨 in progress
+## C1+C3 — Make the seam real  ✅ shipped
 Shipped: `contexts/_template/` (blank adapter), `contexts/example-corp/` (demo
 adapter), `ACTIVE_CONTEXT.md` resolution rule, .gitignore guard.
 Remaining:
@@ -19,14 +19,59 @@ Remaining:
       pitch prose in bd-email/cold-call-prep → `context.positioning`.
       Removed Dutch content lives in git history (pre-extraction: 0aafb9f);
       a real org context carries it locally, never in git.
-- [ ] Secondary residue (found in the extraction audit, out of that scope):
+      (bd-email and event-invite are since retired — see C4.)
+- [x] Secondary residue (found in the extraction audit, out of that scope):
       account-research dossier template (inline ICP table, Prop A/B pitch,
-      offer-format names) → `context.icp`/`context.positioning`;
-      bd-user-rules hardcoded subject convention → `context.tone`;
-      prospect-sourcing.spec.md "Netherlands filter" step → fold into the
-      C2 spec↔skill reconciliation; decide whether `src/bdcore/engagers.py`'s
-      multilingual headline separators (" at ", " bij ", …) are input-parsing
-      heuristics (fine) or belong in `headline_prefilter` config.
+      offer-format names) → `context.icp`/`context.positioning`, done;
+      bd-user-rules hardcoded subject convention → `context.tone`, done
+      (now "any subject-line convention defined in `context.tone`", no
+      hardcoded shape); prospect-sourcing.spec.md "Netherlands filter" step
+      → renamed "Geography filter", resolved from `context.icp()`
+      (the deeper spec↔skill reconciliation is still C2's job); reviewed
+      `src/bdcore/engagers.py`'s multilingual headline separators
+      (" at ", " bij ", …) — judged input-parsing heuristics, not ICP policy:
+      they recognize how *any* LinkedIn headline (in whatever language the
+      commenter wrote it) delimits title from company, which is independent
+      of the org's own `context.tone` language default. Left as-is; no code
+      change (out of scope for this pass — only `seam.py`'s `BASELINE`
+      changed in `src/bdcore/`). Seam baseline driven from 43 to 0 across
+      `core/`, `specs/`, `skills/`, including the callnote-template.md worked
+      example, which was rewritten in place with generic bracket placeholders
+      rather than moved to `contexts/example-corp/`.
+- [x] **Headline-separator question, settled** (portability test F7): the
+      language-heuristic classification above is the final answer, not an
+      open one — restated as a plain code comment on `POSITION_SEPARATORS`
+      in `src/bdcore/engagers.py` instead of a pointer back to this roadmap
+      item. The order assumption underneath it was also checked: every
+      current separator implies `<title> SEP <company>`. Verified
+      `split_position` against a company-first Japanese headline built with
+      fullwidth `｜` (U+FF5C) — no current separator matches it, so it falls
+      through to the safe `(position, "")` case (whole headline as title,
+      empty company — the same "needs enrichment" path already used for
+      missing data). Fullwidth `｜` was deliberately **not** added: its
+      common convention is `<company>｜<title>`, the reverse of every
+      separator already in the tuple, and matching it with the existing
+      title-first split would silently invert `job_title`/`company_name` —
+      a wrong `company_name` flowing into the CSV is worse than an
+      unsplit headline. Adding more *title-first* languages' separators
+      remains a safe feature addition; company-first separators need an
+      explicit per-separator order on `split_position`, not implemented.
+      Test added: a company-first fullwidth-pipe headline asserting the
+      fall-through, not an inversion.
+- [ ] **Known limitation, not yet fixed**: `bd check seam` is a keyword scan for
+      denylisted org proper nouns (`RULES` in `src/bdcore/seam.py`), now run
+      over `core/`, `specs/`, `skills/`, and `src/bdcore/` itself. It cannot and
+      does not detect *structural* residue — prose that encodes one org's sales
+      motion (an ICP, a buyer shape, a channel mix) without using a denylisted
+      word. A live example: `skills/account-research/SKILL.md:90-96` hardcodes
+      an ICP table (`Specialist firm`, `15–150 people`, `Founder/CEO buyer`,
+      `Commercial revenue`) describing one specific consultancy, contradicting
+      the demo org's own `contexts/example-corp/icp.md` (50–500 technicians,
+      VP Operations) — `RULES` matches none of those strings, so the check
+      reports clean. `specs/prospect-sourcing.spec.md:47` has the same shape
+      (`Founder/MD/CEO is likely buyer` stated as prose next to the
+      `context.icp()` call meant to fetch it). Fixing those ICPs is a separate
+      change; this bullet only records that the checker cannot see them.
 
 ## C2 — One source of truth per workflow
 - [ ] Reconcile prospect-sourcing spec↔skill (dedup key, enrichment call, ICP
@@ -37,18 +82,26 @@ Remaining:
       → needs core/methodology first, see C6).
 
 ## C5 — Quarantine the generic island
-- [ ] Move marketing-psychology, revops, sales-enablement, email-sequence,
-      cold-email to `skills/library/` (optional, no framework integration) or cut.
+- [ ] Move marketing-psychology, revops, sales-enablement to `skills/library/`
+      (optional, no framework integration) or cut. (email-sequence and
+      cold-email are already retired — see C4.)
 - [ ] Merge grill-me into grill-with-docs as no-docs mode.
 - [ ] Fix grill-with-docs doc conventions (CONTEXT.md/adr → glossary.md/decisions.md).
 
-## C4 — One deep outreach skill
-- [ ] Design single `outreach` skill implementing outreach-drafting.spec with
-      warmth/purpose as inputs (cold / warm / re-engage / event). Contract-native
-      from birth. Retire the four colliding trigger surfaces.
+## C4 — One deep outreach skill  ✅ shipped
+- [x] Design single `outreach-drafting` skill implementing outreach-drafting.spec
+      with purpose as an input (cold / warm / re-engage / event). Contract-native
+      from birth, logs its own approval outcome. Retired the four colliding
+      trigger surfaces (bd-email, cold-email, email-sequence, event-invite) —
+      content stays in git history.
+- [x] It is instrumented: every approval decision lands in the ledger, so
+      Decision 1's graduation rule has data to read.
 
 ## C6 — Packaging & truth
-- [ ] `.claude-plugin/plugin.json` (Decision 8).
+- [x] `.claude-plugin/plugin.json` (Decision 8). Turned out `plugin.json` alone
+      doesn't make the repo installable from GitHub — `.claude-plugin/marketplace.json`
+      is also required (one entry, `source: "./"`). Both now ship; see Decision 8's
+      v0.2 amendment. `claude plugin validate . --strict` passes.
 - [ ] `tests/<spec>.cases.md` per implemented spec (Decision 4).
 - [ ] `core/methodology/` SPICED + Bowtie summaries (unblocks discovery-call-prep).
 - [ ] Decide `core/archetypes/`: build it, or accept that the glossary's archetype
