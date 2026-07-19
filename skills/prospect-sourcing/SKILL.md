@@ -1,11 +1,11 @@
 ---
 name: prospect-sourcing
-description: Runs the full prospect sourcing pipeline from LinkedIn engagement data to a research-scored, the CRM (example: a mid-market CRM)-ready prospect CSV. Trigger when the user uploads or mentions an Apify JSON file from LinkedIn engagement scraping, says "run the pipeline", "score these engagers", "process the LinkedIn data", or wants to turn a list of LinkedIn engagers into qualified prospects. Also trigger when the user drops a engagers.json or similar Apify export into the session.
+description: Runs the full prospect sourcing pipeline from LinkedIn engagement data to a research-scored, CRM-ready prospect CSV. Trigger when the user uploads or mentions an Apify JSON file from LinkedIn engagement scraping, says "run the pipeline", "score these engagers", "process the LinkedIn data", or wants to turn a list of LinkedIn engagers into qualified prospects. Also trigger when the user drops a engagers.json or similar Apify export into the session.
 ---
 
 # Prospect Sourcing Pipeline
 
-Turns raw LinkedIn engagement data (from Apify) into a scored, enriched prospect list ready for the CRM (example: a mid-market CRM) import and account research.
+Turns raw LinkedIn engagement data (from Apify) into a scored, enriched prospect list ready for CRM import and account research.
 
 ## What you need before starting
 
@@ -15,17 +15,17 @@ Turns raw LinkedIn engagement data (from Apify) into a scored, enriched prospect
 
 ## Step 1 — Parse and deduplicate
 
-Run the bundled script to parse the Apify JSON, deduplicate by actor ID, and apply the headline-based ICP pre-filter:
+Run the `bd` CLI to parse the Apify JSON, deduplicate by actor ID, and apply the headline-based ICP pre-filter:
 
 ```bash
-python3 <skill_dir>/scripts/process_engagers.py <input.json> <output_prefiltered.csv> "<seed_url>"
+bd source <input.json> <output_prefiltered.csv> --seed-url "<seed_url>"
 ```
 
-Replace `<skill_dir>` with the directory containing this SKILL.md. This outputs a CSV with all unique engagers, scored as `soft_pass` (needs research) or `fail`.
+This outputs a CSV with all unique engagers, scored as `soft_pass` (needs research) or `fail`.
 
-The script loads its headline pre-filter keywords from the active org's `context.icp` surface (the `headline_prefilter` JSON block in `icp.md`) and fails loud if the surface or block is missing. Pass `--icp <path>` to override resolution when testing.
+It loads its headline pre-filter keywords from the active org's `context.icp` surface (the `headline_prefilter` JSON block in `icp.md`) and fails loud if the surface or block is missing.
 
-The script prints a summary — share it with the user before proceeding.
+The command prints a summary — share it with the user before proceeding.
 
 ## Step 2 — Web research and ICP scoring
 
@@ -34,9 +34,9 @@ For every `soft_pass` contact where a company name is visible in the `company_na
 **Scoring rules:**
 - `pass` — all ICP criteria confirmed
 - `soft_pass` — all but one confirmed, or a buyer-authority title without confirmed company size
-- `fail` — any hard disqualifier from `context.icp()` confirmed, or no decision authority
+- `fail` — any hard disqualifier from `context.icp()` confirmed, or the account falls outside its geography/reachability criteria
 
-**Hard disqualifiers (immediate fail):** defined in `context.icp()` — any confirmed match is an immediate fail.
+**Hard disqualifiers (immediate fail):** defined in `context.icp()` — any confirmed match is an immediate fail. An account outside `context.icp()`'s geography/reachability criteria is also an immediate fail, even with no other disqualifier present — check this before Apollo enrichment (step 3) so out-of-scope contacts don't burn enrichment credits.
 
 Update the `icp_score` and `icp_notes` columns with your findings. Also fill in `company_size_est` where found.
 

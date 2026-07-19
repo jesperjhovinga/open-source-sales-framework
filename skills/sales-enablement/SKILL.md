@@ -160,6 +160,6 @@ Structure:
 
 ## Related Skills
 
-- **cold-email**: For outbound prospecting emails
+- **outreach-drafting**: For outbound prospecting emails
 - **revops**: For lead lifecycle, scoring, routing, and pipeline management
 - **marketing-psychology**: For persuasion principles to apply to collateral

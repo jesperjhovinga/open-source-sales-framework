@@ -1,6 +1,31 @@
 .DS_Store
 **/.DS_Store
+
 # Real org contexts never enter this repo — only the template and the demo adapter.
 contexts/*
 !contexts/_template/
 !contexts/example-corp/
+
+# Generated artifacts never enter this repo, not even the demo org's. The
+# negations above re-include example-corp wholesale, which would otherwise make
+# a ledger or a draft written against the demo context committable.
+contexts/*/ledger/
+contexts/*/dossiers/
+contexts/*/outreach/
+contexts/*/prep/
+contexts/*/call-notes/
+contexts/*/retrospectives/
+
+# Secrets never enter this repo. .env.example carries the shape, never the values.
+.env
+.env.*
+!.env.example
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.coverage
+dist/

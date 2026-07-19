@@ -6,7 +6,7 @@ BD Core consumes org-specific data only through this contract. No direct file pa
 
 ### `context.positioning(proposition_id)`
 Positioning narrative for a named proposition.
-- **Input**: `proposition_id` (string). At ExampleOrg: `"example_prop_a"` or `"example_prop_b"`.
+- **Input**: `proposition_id` (string). Valid ids are defined by the org's positioning context (`contexts/<org>/`), not by BD Core.
 - **Returns**: narrative arc, key messages, objection reframes.
 
 ### `context.icp(segment?)`

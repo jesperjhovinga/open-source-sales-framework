@@ -1,0 +1,13 @@
+{
+  "name": "open-source-sales-framework",
+  "description": "BD automation framework: skills, specs, and the language contract for AI-assisted Business Development.",
+  "owner": {
+    "name": "Jesper Hovinga"
+  },
+  "plugins": [
+    {
+      "name": "open-source-sales-framework",
+      "source": "./"
+    }
+  ]
+}

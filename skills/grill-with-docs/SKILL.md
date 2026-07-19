@@ -13,20 +13,20 @@ If a question can be answered by reading existing files in the project, read the
 
 Look for existing documentation in the project:
 
-- `CONTEXT.md` at the root — a domain glossary (not a spec, not implementation notes — just terms)
-- `docs/adr/` — Architecture Decision Records for hard-to-reverse decisions
+- `core/language/glossary.md` — the ubiquitous language (not a spec, not implementation notes — just terms)
+- `docs/decisions.md` — settled decisions, with the rationale, for hard-to-reverse choices
 
 Create these files lazily — only when you have something to write.
 
 ## During the session
 
-**Challenge against the glossary.** When I use a term that conflicts with an existing entry in `CONTEXT.md`, call it out. "Your glossary defines X as Y, but you seem to mean Z — which is it?"
+**Challenge against the glossary.** When I use a term that conflicts with an existing entry in `core/language/glossary.md`, call it out. "Your glossary defines X as Y, but you seem to mean Z — which is it?"
 
 **Sharpen fuzzy language.** When I use vague or overloaded terms, propose a precise canonical term. "You're saying 'account' — do you mean the Customer or the User? Those are different things."
 
 **Discuss concrete scenarios.** When domain relationships are being discussed, stress-test them with specific examples that probe edge cases.
 
-**Update CONTEXT.md inline.** When a term is resolved, update `CONTEXT.md` right there — don't batch these up.
+**Update the glossary inline.** When a term is resolved, update `core/language/glossary.md` right there — don't batch these up.
 
 **Offer ADRs sparingly.** Only offer to create an ADR when all three are true:
 1. Hard to reverse — changing your mind later has real cost

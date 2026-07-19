@@ -42,8 +42,8 @@ Researcher pulls dossier + prior context. Drafter produces a DiscoveryPrepDoc wi
 3. Working hypothesis — the problem we believe they have + our entry angle.
 4. SPICED-aligned agenda — Situation, Pain, Impact, Critical event, Decision criteria, exit question.
 5. Questions to ask (5–10, each mapped to a SPICED dimension).
-6. Likely objections + reframes (from `project_sales_enablement.md` + positioning).
-7. Proof points to keep handy (case studies, workshop examples).
+6. Likely objections + reframes (from `context.positioning()` — objection reframes are part of that surface, per `core/context-contract.md`).
+7. Proof points to keep handy (case studies, past engagement-session examples).
 8. Explicit unknowns — what we don't know and want to find out.
 
 Reviewer: no fabricated claims, SPICED coverage complete, tone match.
@@ -80,6 +80,6 @@ BDOwner reads and optionally edits. No "approve" action because nothing is sent 
 ## Open questions
 
 - Delivery channel — where does the BDOwner actually read the doc (Drive, Notion, email, chat)?
-- Auto-detection of proposition (EXAMPLE PROP A vs EXAMPLE PROP B) per call, or BDOwner-tagged?
+- Auto-detection of the proposition (per `context.positioning()`) per call, or BDOwner-tagged?
 - Calendar connector choice (Google Calendar, Outlook) — confirm before implementation.
-- If the Meeting has multiple purposes (e.g., discovery + workshop pitch), which template applies?
+- If the Meeting has multiple purposes (e.g., discovery combined with pitching a follow-on engagement session), which template applies?

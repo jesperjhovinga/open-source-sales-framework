@@ -1,6 +1,6 @@
 ---
 name: account-research
-description: Produces a structured AccountDossier for a prospect company. Trigger when the user asks to "research [company]", "do a dossier on [company]", "look into [account]", or when a prospect CSV contains pass-scored accounts that need research before outreach. Also trigger after prospect-sourcing when the user wants to move from a scored list to dossiers. Each dossier is saved as a markdown file in the ExampleOrg context folder.
+description: Produces a structured AccountDossier for a prospect company. Trigger when the user asks to "research [company]", "do a dossier on [company]", "look into [account]", or when a prospect CSV contains pass-scored accounts that need research before outreach. Also trigger after prospect-sourcing when the user wants to move from a scored list to dossiers. Each dossier is saved as a markdown file in the org's context folder.
 ---
 
 # Account Research
@@ -25,9 +25,9 @@ Search the web for the following signals. Cite sources or flag as inference — 
 
 **Company basics:**
 - What do they do (core service or product)?
-- How many people (LinkedIn, company site, ZoomInfo, Apollo, KvK)?
-- Revenue model — commercial fees, grants, government contracts?
-- NL-based? HQ location?
+- How many people (LinkedIn, company site, ZoomInfo, Apollo, a local company registry)?
+- Revenue model — how the company makes money, and whether that matches any revenue-type criteria in `context.icp()`?
+- HQ location — meets the geography criteria in `context.icp()`?
 - Website
 
 **Recent signals (last 6–12 months):**
@@ -37,17 +37,17 @@ Search the web for the following signals. Cite sources or flag as inference — 
 - Job postings (signals growth areas and priorities)
 
 **Key people:**
-- Decision-maker: Founder/MD/CEO/Directeur with budget authority
+- Decision-maker: per the buyer persona(s) defined in `context.icp()` — the title(s) or role(s) with authority over this purchase, rendered in the local-language equivalent per `context.tone`
 - Champion candidate: someone technical or operational who would benefit from the org's work
 - Anyone connected to the warm signal (e.g. the person who engaged on LinkedIn)
 
 **Proposition fit:**
-- Does the org's Prop A (team with dev capability needing SDD operating model) or Prop B (no dev team, needs a product built) fit better?
-- What specific problem would ExampleOrg solve for them?
-- Is there a repeatable methodology, internal tool, or operational process that could become a digital product?
+- Which proposition from `context.positioning()` fits better, and why?
+- What specific problem would the org solve for them?
+- What in their current operations creates an opening for the org's proposition, per `context.positioning()`?
 
 **Competitive context:**
-- What alternatives would they consider (freelancers, agencies, low-code platforms, hiring in-house)?
+- What alternatives would they consider — per `context.competitors()` and the account's specific situation?
 - What makes the org's approach different in this specific context?
 
 If public data is thin on any section, write "insufficient public information" — do not invent.
@@ -55,6 +55,15 @@ If public data is thin on any section, write "insufficient public information" �
 ## Dossier format
 
 Save the dossier as markdown to the AccountDossier path per `core/path-conventions.md`.
+
+For the ICP fit section: read `context.icp()` and build one row per
+qualification criterion it defines (for example: size band, revenue type,
+buyer persona, geography/reachability, differentiation — whatever that org's
+ICP actually specifies). Do not use a fixed list and do not fall back to
+default criteria if `context.icp()` is missing or `STATUS: UNFILLED` — that is
+a blocking error per `core/context-contract.md`; stop and tell the BDOwner
+instead of guessing. Add a final row for the ICP's disqualifiers (also
+returned by `context.icp()`).
 
 Use this exact structure:
 
@@ -85,27 +94,25 @@ Use this exact structure:
 ---
 
 ## ICP fit
+
 | Criterion | Signal | Score |
 |---|---|---|
-| Specialist firm | [evidence] | ✅ / 🟡 / ❌ |
-| Netherlands-based | [evidence] | ✅ / 🟡 / ❌ |
-| 15–150 people | [evidence] | ✅ / 🟡 / ❌ |
-| Commercial revenue | [evidence] | ✅ / 🟡 / ❌ |
-| Founder/CEO buyer | [evidence] | ✅ / 🟡 / ❌ |
-| Proprietary methodology / tool | [evidence] | ✅ / 🟡 / ❌ |
-| Disqualifiers | [any present?] | ✅ / ❌ |
+| [criterion 1, from `context.icp()`] | [evidence] | ✅ / 🟡 / ❌ |
+| [criterion 2, from `context.icp()`] | [evidence] | ✅ / 🟡 / ❌ |
+| [one row per remaining criterion in `context.icp()`] | [evidence] | ✅ / 🟡 / ❌ |
+| Disqualifiers (per `context.icp()`) | [any present? list them] | ✅ / ❌ |
 
-**ICP score: PASS / SOFT_PASS / FAIL**
+**ICP score**: **PASS** — every criterion met, no disqualifiers present. **SOFT_PASS** — most criteria met, one signal missing or unverifiable, no disqualifiers present. **FAIL** — a disqualifier is present, or multiple criteria are unmet.
 
 ---
 
 ## Proposition fit
-[Which ExampleOrg proposition fits (A or B) and why. What specific problem ExampleOrg solves. Custom framing — never mention specific entry formats like Delivery Scan or Blueprint Session.]
+[Which proposition from `context.positioning()` fits, and why. What specific problem it solves. Custom framing, tied to what `context.positioning()` actually defines — don't invent proposition or offer-format names it doesn't have.]
 
 ---
 
 ## Competitive context
-[What alternatives they'd consider. Where ExampleOrg differentiates in this specific context.]
+[What alternatives they'd consider. Where the org differentiates in this specific context.]
 
 ---
 

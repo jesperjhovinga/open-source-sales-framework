@@ -31,10 +31,53 @@ BD is pattern-heavy. Research accounts, write outreach, prep calls, summarize co
 
 ## Getting started
 
+Install as a Claude Code plugin:
+
+```
+/plugin marketplace add jesperjhovinga/open-source-sales-framework
+/plugin install open-source-sales-framework@open-source-sales-framework
+```
+
+Skills then invoke as `/open-source-sales-framework:<skill-name>`.
+
 1. Try it as-is: `ACTIVE_CONTEXT.md` points at `example-corp`, a fictional demo org — run the account-research skill against any public company to see the flow.
 2. Make it yours: copy `contexts/_template/` to `contexts/<your-org>/`, fill every surface (positioning, ICP, tone of voice, competitors, content, pricing, connectors), set `ACTIVE_CONTEXT.md` to your slug.
 3. Start with three workflows: account research (Autonomous), outreach drafting and call prep (Draft→Approve).
 4. Log approval/edit rates from day one — they drive autonomy graduation. See `docs/roadmap.md` for where the framework is heading.
+
+## Working on the framework
+
+The framework's runtime is Claude — the skills in `skills/` are the workflows. `src/bdcore/` is a small Python spine for the deterministic work that has one right answer and shouldn't be re-derived per call: resolving the active org context (fail-loud per the contract), validating a skill card's shape, sourcing prospects, and mechanically enforcing the two hard rules ("the seam is law", "docs must not lie"). Skills invoke it through the `bd` CLI.
+
+Requires [`uv`](https://docs.astral.sh/uv/) and [`just`](https://github.com/casey/just).
+
+```bash
+just install     # sync deps
+just             # list every command
+just ci          # lint, type-check, tests, seam check, doc-truth check
+just seam        # fail if BD Core carries org-specific content
+just docs        # fail if a doc claims a repo path that doesn't exist
+just context     # show the active org
+```
+
+The seam check ships with a **baseline** of org residue that already existed (see `docs/roadmap.md` C1+C3). Baselined violations are reported but don't fail the build; any *new* violation does. Extract residue and delete its baseline entry — the ratchet only tightens.
+
+Secrets: copy `.env.example` to `.env` (gitignored) if you wire up a connector that needs API keys. Most connectors bind through Claude's MCP and need none.
+
+## Governed autonomy
+
+Autonomy is earned, not assumed. Every Draft→Approve run is logged, and the
+record decides when a workflow may be trusted further.
+
+```bash
+bd review                      # approve / edit / reject pending drafts
+bd graduation-status           # has a workflow earned a higher zone yet?
+```
+
+The ledger is append-only at `contexts/<org>/ledger/approvals.jsonl` (org data —
+gitignored, never committed). `bd graduation-status` applies Decision 1's bar:
+≥90% approval and <10% word-edit-rate over 30 consecutive runs at the same spec
+version. It **reports**; a human promotes the zone.
 
 ## License
 

@@ -16,6 +16,13 @@ Resolved 2026-04-28 with AI-first, autonomy-leaning best-practice defaults. Each
 
 **Revisit when**: dashboard ships and meets ≥3 weeks usage. Reconsider Slack/Teams notifications if email feels too slow.
 
+**Amendment (v0.2)**: the review surface ships as `bd review` — a dashboard served
+on loopback by the CLI, not a hosted app. Same page, same three actions, and the
+structured feedback still lands in the ledger. Mobile and email notifications are
+**not** built: they need hosting infrastructure and are a separate concern from the
+metric. The auto-graduation rule is computed and **reported** by
+`bd graduation-status`; it never flips a zone. Promotion stays a human act.
+
 ---
 
 ## Decision 2 — Source citation format
@@ -111,11 +118,29 @@ Resolved 2026-04-28 with AI-first, autonomy-leaning best-practice defaults. Each
 **Why**: Lowest friction. Native to the BDOwner's environment. Trivially version-controlled (already in Git). Same plugin loads in any Org Context — only `contexts/<org>/` swaps. AI-first by definition: the runtime *is* Claude.
 
 **Plugin shape**:
-- `.claude-plugin/plugin.json` at repo root.
+- `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json` at repo root.
 - `skills/<spec-id>/SKILL.md` for each implemented spec.
 - Agent personas (Researcher, Drafter, Reviewer, etc.) referenced by skills.
 
 **Revisit when**: a real cross-runtime requirement appears (e.g., embedding agent in a non-Claude product).
+
+**Amendment (v0.2)**: still true — the runtime *is* Claude, and skills remain the
+implementation of every spec. `src/bdcore/` is not a second runtime and implements
+no workflow: it holds the deterministic work that has an objectively right answer
+(parse a JSON export, check a card's shape, grep for seam residue) and that a
+language model should not be re-deriving per call. Skills invoke it via the `bd`
+CLI. If a thing requires judgement, it belongs in a skill, not in `bdcore`.
+
+**Amendment (v0.2)**: the original text above claimed the bundle was installable
+"in any Claude Code session" and listed only `plugin.json` under "Plugin shape."
+That was wrong: `plugin.json` alone does not make a repo installable via
+`/plugin install` from GitHub — Claude Code also needs a
+`.claude-plugin/marketplace.json` declaring the marketplace and pointing at the
+plugin (here, one entry with `source: "./"`, since the plugin root is the repo
+root). Neither this decision nor `docs/roadmap.md` C6 mentioned that file; the
+gap went unnoticed until it was checked against the install path directly. Both
+files now exist at the repo root and pass `claude plugin validate . --strict`.
+The "Plugin shape" list above is corrected to name both.
 
 ---
 
@@ -129,6 +154,21 @@ Resolved 2026-04-28 with AI-first, autonomy-leaning best-practice defaults. Each
 
 **Revisit when**: agent needs typed access (e.g., structured ICP filters as objects). At that point, formalize as a Python or Node module wrapping the file reads.
 
+**Amendment (v0.2)**: the revisit trigger fired. The `headline_prefilter` JSON
+block in `context.icp` is exactly the "structured ICP filters as objects" case
+this decision named, and `bd source` needs typed access to it. The resolver is
+now `src/bdcore/context.py`, wrapping the same file reads against the same
+convention.
+
+Markdown-as-API is unchanged: surfaces are still markdown, still authored by
+hand, still readable by an agent doing a direct file read. The wrapper is for
+*code* that needs a surface, and it exists because the resolution rules —
+active-org lookup, Rule 3 fail-loud, Rule 5 UNFILLED-is-missing — were being
+reimplemented ad hoc inside a sourcing script, where they were untestable and
+would have been copy-pasted into the next script that needed them. One
+implementation, covered by tests. Agents reading surfaces directly is still
+correct and still the common case.
+
 ---
 
 ## Decision 10 — Versioning
@@ -137,12 +177,71 @@ Resolved 2026-04-28 with AI-first, autonomy-leaning best-practice defaults. Each
 
 **Decision**:
 - **Context contract**: semver. `v0.1.0` today. Breaking changes bump major.
-- **Specs**: lightweight version field per spec, bumped when acceptance criteria or process changes.
+- **Specs**: `vMAJOR.MINOR` per spec. **MAJOR** bumps for any behavioural change —
+  acceptance criteria, process, or output shape — and resets the workflow's Decision 1
+  graduation track record; this holds **even at 0.x** — semver's usual convention that
+  0.x changes are exempt from breaking-change discipline does not apply here, because
+  Decision 1 evidence must never silently carry across a behavioural change. **MINOR**
+  bumps only for an editorial change (wording, a typo, an example) where behaviour is
+  identical, and evidence carries over.
 - **Repo releases**: date-tagged for milestones (`v2026.04.28`).
 
-**Why**: Contract is the load-bearing API; semver makes breaking changes visible and forces every Org Context to update on bumps. Specs are working documents — light is enough. Date tags = handoff/rollback markers.
+**Why**: Contract is the load-bearing API; semver makes breaking changes visible and forces every Org Context to update on bumps. Specs are working documents, but MAJOR/MINOR still has to be unambiguous because Decision 1's graduation evidence hangs on it. Date tags = handoff/rollback markers.
 
 **Revisit when**: first breaking contract change ships (forces real semver discipline).
+
+**Amendment (v0.2)**: the original Decision text above has been edited in place —
+it originally said specs used a "lightweight version field... bumped when
+acceptance criteria or process changes," with no MAJOR/MINOR distinction. That
+wording could not tell a wording fix from a behavioural change, so a spec
+author had no way to say "nothing behavioural happened here," and — because
+every spec in this repo sits at `v0.1` — it invited the unsafe default of
+bumping straight to `v0.2` for a real behavioural change, silently carrying
+graduation evidence that should have reset. This is why Decision 11 could be
+rewritten to stop resetting the graduation window on every bump: MAJOR/MINOR
+gives it a real distinction to key on.
+
+**Carve-out:** correcting a spec that inaccurately described existing
+behaviour — org residue baked into a Process step or Acceptance criterion that
+never matched what the workflow actually did, or that contradicted the spec's
+own unchanged Inputs section naming a contract surface as the source of truth
+— is editorial (MINOR, or no bump for a spec still at 0.x). Only a change to
+what the workflow actually *does* going forward is MAJOR. This distinction
+matters because de-orging BD Core (`docs/roadmap.md` C1+C3) means rewriting
+spec text that hardcoded one org's criteria into a reference to the relevant
+contract surface; that rewrite must not be confused with the workflow's
+behaviour changing.
+
+---
+
+## Decision 11 — Graduation window and a spec version bump
+
+**Q**: When a spec's version bumps, do its previous runs still count toward the
+Decision 1 graduation bar?
+
+**Decision**: Depends on the kind of bump (Decision 10, v0.2 amendment). The
+30-run window is keyed on `(spec, MAJOR)`. A **MAJOR** bump resets it — a new
+major version is a materially different workflow. A **MINOR** bump does not —
+the workflow's behaviour is unchanged, so its evidence carries over.
+
+**Why**: Decision 1's bar exists to earn autonomy on real evidence. Resetting on
+every bump (the original v0.1 rule) counted a typo fix as a new workflow and
+threw away a nearly-graduated track record for no behavioural reason — the
+mirror-image failure of counting v0.1's evidence toward a materially different
+v0.2. Keying on MAJOR gets both right: an editorial fix doesn't cost 30 runs,
+and a real behaviour change still starts its own clock.
+
+**Revisit when**: an author bumps MAJOR out of caution for a change that was
+really editorial (losing evidence they didn't need to lose), or bumps MINOR for
+a change that turns out to be behavioural (hiding a change graduation should
+have reset on). Either observed in practice means the MAJOR/MINOR line needs
+tightening, not just trusting the author's judgement call.
+
+Also note: every spec in this repo currently sits at `v0.1`. The first
+behavioural change to any of them must bump to `v1.0`, not `v0.2` — `v0.2` is
+reserved for an editorial-only change. Treating `v0.2` as available for a
+spec's first behavioural change is exactly the unsafe default Decision 10's
+amendment exists to close off.
 
 ---
 

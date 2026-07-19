@@ -7,8 +7,11 @@ How the agent finds files in BD Core and Org Context. v0.1 uses direct file read
 - `core/language/glossary.md` — ubiquitous language.
 - `core/context-contract.md` — Core ↔ Context API contract.
 - `core/path-conventions.md` — this file.
-- `core/methodology/` — WbD blueprints and other framework references.
-- `core/archetypes/` — agent archetype specs (Researcher, Drafter, Summarizer, Reviewer, Coach).
+Agent archetypes (Researcher, Drafter, Summarizer, Reviewer, Coach) live in
+`core/language/glossary.md`.
+
+This list documents paths that exist. Paths the framework intends to add are
+tracked in `docs/roadmap.md` (C6) until they do — a convention is not a plan.
 
 ## Org Context paths
 
@@ -30,14 +33,21 @@ For each Org Context at `contexts/<org-slug>/`:
 - `contexts/<org>/dossiers/<account-slug>.md` — AccountDossier.
 - `contexts/<org>/prep/<account-slug>-<meeting-date>.md` — DiscoveryPrepDoc.
 - `contexts/<org>/outreach/<account-slug>-<contact-slug>-<seq-id>.md` — OutreachSequence draft.
+- `contexts/<org>/outreach/originals/<account-slug>-<contact-slug>-<seq-id>.md` — frozen
+  copy of that draft as first generated, written once and never edited again. It is what
+  `bd log-approval --before` names; `bd review`'s pending queue does not look inside this
+  subdirectory, so it never appears as a draft awaiting review.
 - `contexts/<org>/call-notes/<account-slug>-<meeting-date>.md` — CallNote.
 - `contexts/<org>/retrospectives/<deal-slug>.md` — Post-deal retrospective.
+- `contexts/<org>/ledger/approvals.jsonl` — the approval ledger. Append-only; one
+  JSON record per Draft→Approve decision. Consumed by `bd graduation-status`.
 
 ## Spec & skill paths
 
 - `specs/<spec-id>.spec.md` — workflow specs.
 - `skills/<spec-id>/SKILL.md` — Claude skill implementing a spec.
-- `tests/<spec-id>.cases.md` — eval harness cases.
+- `tests/cases/<spec-id>.cases.md` — eval harness cases (Decision 4; not yet built, roadmap C6).
+- `tests/test_*.py` — the Python suite for `src/bdcore/`.
 
 ## Resolver behavior
 
